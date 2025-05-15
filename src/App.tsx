@@ -12,10 +12,23 @@ import Portfolio from "./pages/Portfolio";
 import Membership from "./pages/Membership";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+
+// Client dashboard
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import DashboardIndex from "./pages/Dashboard/Index";
 import DashboardBookings from "./pages/Dashboard/Bookings";
 import DashboardGallery from "./pages/Dashboard/Gallery";
+
+// Admin dashboard
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminLogin from "./pages/Admin/Login";
+import AdminDashboard from "./pages/Admin/Index";
+import RoleGuard from "./components/auth/RoleGuard";
+
+// Staff dashboard
+import StaffLayout from "./components/staff/StaffLayout";
+import StaffLogin from "./pages/Staff/Login";
+import StaffDashboard from "./pages/Staff/Index";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +40,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
@@ -34,15 +48,39 @@ const App = () => (
             <Route path="/membership" element={<Membership />} />
             <Route path="/contact" element={<Contact />} />
             
-            {/* Dashboard Routes */}
+            {/* Authentication Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/staff/login" element={<StaffLogin />} />
+            
+            {/* Client Dashboard Routes */}
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<DashboardIndex />} />
               <Route path="bookings" element={<DashboardBookings />} />
               <Route path="gallery" element={<DashboardGallery />} />
-              {/* Add more dashboard routes as needed */}
+              {/* Add more client dashboard routes as needed */}
             </Route>
             
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            {/* Admin Dashboard Routes - Protected */}
+            <Route path="/admin" element={
+              <RoleGuard allowedRoles={["admin"]} redirectTo="/admin/login">
+                <AdminLayout />
+              </RoleGuard>
+            }>
+              <Route index element={<AdminDashboard />} />
+              {/* Add more admin dashboard routes as needed */}
+            </Route>
+            
+            {/* Staff Dashboard Routes - Protected */}
+            <Route path="/staff" element={
+              <RoleGuard allowedRoles={["staff"]} redirectTo="/staff/login">
+                <StaffLayout />
+              </RoleGuard>
+            }>
+              <Route index element={<StaffDashboard />} />
+              {/* Add more staff dashboard routes as needed */}
+            </Route>
+            
+            {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

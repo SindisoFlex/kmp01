@@ -1,10 +1,18 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import UserMenu from "@/components/auth/UserMenu";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -65,9 +73,29 @@ const Navbar: React.FC = () => {
             ))}
           </nav>
 
-          {/* User Menu, Theme Toggle & Mobile Menu Button */}
+          {/* User Menu, Admin/Staff Login, Theme Toggle & Mobile Menu Button */}
           <div className="flex items-center space-x-2">
             <UserMenu />
+            
+            {/* Admin/Staff Login Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <LogIn className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Employee Access</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/login" className="cursor-pointer">Admin Login</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/staff/login" className="cursor-pointer">Staff Login</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <ThemeToggle />
             <Button
               variant="ghost"
@@ -114,6 +142,22 @@ const Navbar: React.FC = () => {
                   {link.name}
                 </Link>
               ))}
+              <div className="pt-4 border-t border-border w-full flex flex-col items-center space-y-4">
+                <Link
+                  to="/admin/login"
+                  className="text-lg font-medium py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Admin Login
+                </Link>
+                <Link
+                  to="/staff/login"
+                  className="text-lg font-medium py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Staff Login
+                </Link>
+              </div>
             </nav>
           </div>
         </div>
