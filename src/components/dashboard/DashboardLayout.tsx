@@ -4,7 +4,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
-  Gallery,
+  GalleryHorizontal,
   Calendar,
   User,
   Settings,
@@ -25,7 +25,7 @@ const DashboardLayout: React.FC = () => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "My Bookings", href: "/dashboard/bookings", icon: Calendar },
-    { name: "My Gallery", href: "/dashboard/gallery", icon: Gallery },
+    { name: "My Gallery", href: "/dashboard/gallery", icon: GalleryHorizontal },
     { name: "My Points", href: "/dashboard/points", icon: Award, badge: user?.points },
     { name: "My Profile", href: "/dashboard/profile", icon: User },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },

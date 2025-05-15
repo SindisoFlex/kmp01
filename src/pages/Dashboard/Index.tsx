@@ -1,9 +1,8 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Calendar, Gallery, Award, Link as LinkIcon, ChevronRight } from "lucide-react";
+import { Calendar, GalleryHorizontal, Award, Link as LinkIcon, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
@@ -86,7 +85,7 @@ const DashboardIndex: React.FC = () => {
               <CardTitle className="text-sm font-medium">Gallery</CardTitle>
               <CardDescription>Your photo collection</CardDescription>
             </div>
-            <Gallery className="h-5 w-5 text-primary" />
+            <GalleryHorizontal className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12 Photos</div>
@@ -187,7 +186,7 @@ const DashboardIndex: React.FC = () => {
               </>
             ) : (
               <div className="text-center py-6">
-                <Gallery className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                <GalleryHorizontal className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
                 <h3 className="text-lg font-medium">No photos yet</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Your gallery will populate after your first photoshoot
