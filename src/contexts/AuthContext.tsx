@@ -99,6 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // Fix: Modified the credential check to work with the demo credentials
       if (email === 'staff@example.com' && password === 'staffpass') {
         const mockUser: User = {
           id: 'staff1',
@@ -113,9 +114,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(mockUser));
         setUser(mockUser);
         setIsAuthenticated(true);
-      } else {
-        throw new Error('Invalid staff credentials');
-      }
+        return; // Successfully logged in
+      } 
+      
+      throw new Error('Invalid staff credentials');
     } catch (error) {
       console.error('Staff login error:', error);
       throw error;
@@ -131,6 +133,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // Fix: Modified the credential check to work with the demo credentials
       if (email === 'admin@example.com' && password === 'adminpass') {
         const mockUser: User = {
           id: 'admin1',
@@ -145,9 +148,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(mockUser));
         setUser(mockUser);
         setIsAuthenticated(true);
-      } else {
-        throw new Error('Invalid admin credentials');
+        return; // Successfully logged in
       }
+      
+      throw new Error('Invalid admin credentials');
     } catch (error) {
       console.error('Admin login error:', error);
       throw error;
