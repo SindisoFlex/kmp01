@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import UserMenu from "@/components/auth/UserMenu";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -64,8 +65,9 @@ const Navbar: React.FC = () => {
             ))}
           </nav>
 
-          {/* Theme Toggle & Mobile Menu Button */}
+          {/* User Menu, Theme Toggle & Mobile Menu Button */}
           <div className="flex items-center space-x-2">
+            <UserMenu />
             <ThemeToggle />
             <Button
               variant="ghost"
