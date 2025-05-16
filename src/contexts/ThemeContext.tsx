@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { toast } from "@/hooks/use-toast";
 
 export type ThemeColor = 'default' | 'blue' | 'purple' | 'green' | 'pink' | 'orange';
 export type ThemeLayout = 'grid' | 'masonry' | 'carousel';
