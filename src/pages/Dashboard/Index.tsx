@@ -1,10 +1,12 @@
+
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Calendar, GalleryHorizontal, Award, Link as LinkIcon, ChevronRight } from "lucide-react";
+import { Calendar, GalleryHorizontal, Award, Share, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { determineTier, pointsToNextTier } from "@/utils/pointsUtils";
 
 const DashboardIndex: React.FC = () => {
   const { user } = useAuth();
@@ -31,6 +33,35 @@ const DashboardIndex: React.FC = () => {
       minute: '2-digit'
     });
   };
+  
+  // Get tier information if user exists
+  const currentTier = user ? determineTier(user.points) : 'free';
+  const tierInfo = user ? pointsToNextTier(user.points) : { nextTier: 'bronze', pointsNeeded: 0 };
+  
+  // Calculate progress percentage
+  const calculateProgress = () => {
+    if (!user) return 0;
+    
+    if (currentTier === 'vip') return 100;
+    
+    if (currentTier === 'free' && user.points === 0) return 0;
+    
+    const tiers = {
+      free: { min: 0, max: 0 },
+      bronze: { min: 1, max: 50 },
+      silver: { min: 51, max: 100 },
+      gold: { min: 101, max: 250 },
+      vip: { min: 251, max: Infinity }
+    };
+    
+    const currentMin = tiers[currentTier].min;
+    const nextMin = tierInfo.nextTier ? tiers[tierInfo.nextTier].min : currentMin;
+    const range = nextMin - currentMin;
+    
+    if (range === 0) return 100;
+    
+    return Math.min(100, Math.max(0, ((user.points - currentMin) / range) * 100));
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -51,14 +82,25 @@ const DashboardIndex: React.FC = () => {
             <Award className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold mb-2 capitalize">{user?.membershipTier || 'Free'}</div>
+            <div className="text-2xl font-bold mb-2 capitalize">{currentTier}</div>
             <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
               <div 
                 className="bg-primary h-2 rounded-full" 
-                style={{ width: '30%' }}
+                style={{ width: `${calculateProgress()}%` }}
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-2">300 more points until Silver tier</p>
+            {tierInfo.nextTier ? (
+              <p className="text-xs text-muted-foreground mt-2">
+                {tierInfo.pointsNeeded} more points until {tierInfo.nextTier} tier
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground mt-2">
+                You've reached our highest tier!
+              </p>
+            )}
+            <Button variant="link" className="p-0 mt-2" asChild>
+              <Link to="/dashboard/points">View membership details</Link>
+            </Button>
           </CardContent>
         </Card>
 
@@ -221,8 +263,8 @@ const DashboardIndex: React.FC = () => {
                 <p className="text-sm text-muted-foreground">Earn 50 points per referral</p>
               </div>
               <Button variant="outline" asChild>
-                <Link to="/dashboard/refer">
-                  <LinkIcon className="h-4 w-4 mr-2" />
+                <Link to="/dashboard/points">
+                  <Share className="h-4 w-4 mr-2" />
                   Share
                 </Link>
               </Button>
@@ -234,11 +276,11 @@ const DashboardIndex: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="font-semibold">Download Photos</h3>
-                <p className="text-sm text-muted-foreground">Get high-res images</p>
+                <h3 className="font-semibold">Customize Gallery</h3>
+                <p className="text-sm text-muted-foreground">Change theme & layout</p>
               </div>
               <Button variant="outline" asChild>
-                <Link to="/dashboard/download">Download</Link>
+                <Link to="/dashboard/gallery-settings">Customize</Link>
               </Button>
             </div>
           </CardContent>

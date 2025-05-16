@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import AuthDialog from "./AuthDialog";
+import { determineTier } from "@/utils/pointsUtils";
 
 const UserMenu: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -46,6 +47,8 @@ const UserMenu: React.FC = () => {
     .join('')
     .toUpperCase()
     .slice(0, 2);
+    
+  const currentTier = determineTier(user.points);
 
   return (
     <DropdownMenu>
@@ -62,6 +65,11 @@ const UserMenu: React.FC = () => {
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+          </div>
+          <div className="mt-2 flex items-center">
+            <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5 capitalize">
+              {currentTier} Tier
+            </span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -84,7 +92,10 @@ const UserMenu: React.FC = () => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link to="/dashboard/settings" className="cursor-pointer">Settings</Link>
+          <Link to="/dashboard/gallery-settings" className="cursor-pointer">Gallery Settings</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/dashboard/settings" className="cursor-pointer">Account Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-500 focus:text-red-500">
           Log out
