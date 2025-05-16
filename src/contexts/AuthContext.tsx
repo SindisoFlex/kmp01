@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type UserRole = 'client' | 'staff' | 'admin';
+export type UserRole = 'client' | 'staff' | 'admin' | 'guest';
 
 export interface User {
   id: string;
@@ -12,6 +12,7 @@ export interface User {
   points: number;
   profilePic?: string;
   role: UserRole;
+  signupMethod?: 'email' | 'google' | 'facebook' | 'whatsapp';
 }
 
 interface AuthContextType {
@@ -23,8 +24,11 @@ interface AuthContextType {
   socialLogin: (provider: 'google' | 'facebook' | 'whatsapp') => Promise<void>;
   staffLogin: (email: string, password: string) => Promise<void>;
   adminLogin: (email: string, password: string) => Promise<void>;
+  guestAccess: (name: string, email: string) => Promise<void>;
   logout: () => void;
   hasRole: (roles: UserRole | UserRole[]) => boolean;
+  updateMembershipTier: (tier: 'free' | 'basic' | 'premium' | 'vip') => void;
+  addPoints: (points: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -75,7 +79,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           membershipTier: 'basic',
           points: 150,
           profilePic: 'https://i.pravatar.cc/150?u=demo',
-          role: 'client'
+          role: 'client',
+          signupMethod: 'email'
         };
         
         localStorage.setItem('user', JSON.stringify(mockUser));
@@ -174,7 +179,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         membershipTier: 'free',
         points: 50, // Welcome points
         profilePic: undefined,
-        role: 'client'
+        role: 'client',
+        signupMethod: 'email'
       };
       
       localStorage.setItem('user', JSON.stringify(mockUser));
@@ -202,7 +208,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         membershipTier: 'free',
         points: 50,
         profilePic: `https://i.pravatar.cc/150?u=${provider}${Date.now()}`,
-        role: 'client'
+        role: 'client',
+        signupMethod: provider
       };
       
       localStorage.setItem('user', JSON.stringify(mockUser));
@@ -210,6 +217,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsAuthenticated(true);
     } catch (error) {
       console.error(`${provider} login error:`, error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Guest access function (for quote requests)
+  const guestAccess = async (name: string, email: string) => {
+    setLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const mockUser: User = {
+        id: `guest-${Date.now()}`,
+        name,
+        email,
+        membershipTier: 'free',
+        points: 0,
+        role: 'guest'
+      };
+      
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Guest access error:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -233,6 +266,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return user.role === roles;
   };
 
+  // Update membership tier
+  const updateMembershipTier = (tier: 'free' | 'basic' | 'premium' | 'vip') => {
+    if (user) {
+      const updatedUser = { ...user, membershipTier: tier };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    }
+  };
+
+  // Add loyalty points
+  const addPoints = (points: number) => {
+    if (user) {
+      const updatedUser = { ...user, points: user.points + points };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -244,8 +295,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         socialLogin,
         staffLogin,
         adminLogin,
+        guestAccess,
         logout,
-        hasRole
+        hasRole,
+        updateMembershipTier,
+        addPoints
       }}
     >
       {children}

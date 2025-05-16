@@ -20,31 +20,62 @@ export const pointsConfig: PointsConfig = {
       min: 0,
       max: 0,
       color: 'gray-400',
-      perks: ['Basic account access']
+      perks: [
+        'Basic account access',
+        'Online booking',
+        'View and download photos',
+        '30-day gallery access'
+      ]
     },
     bronze: {
       min: 1,
       max: 50,
       color: 'amber-600',
-      perks: ['5% discount on photoshoots', 'Access to basic filters']
+      perks: [
+        'All free benefits',
+        '5% discount on photoshoots',
+        'Access to basic filters',
+        '3-month gallery access'
+      ]
     },
     silver: {
       min: 51,
       max: 100,
       color: 'gray-400',
-      perks: ['10% discount on photoshoots', 'Access to premium filters', 'Priority booking']
+      perks: [
+        'All bronze benefits',
+        '10% discount on photoshoots',
+        'Access to premium filters',
+        'Priority booking',
+        '6-month gallery access'
+      ]
     },
     gold: {
       min: 101,
       max: 250,
       color: 'yellow-500',
-      perks: ['15% discount on photoshoots', 'Access to all filters', 'Priority booking', 'Free photo editing']
+      perks: [
+        'All silver benefits',
+        '15% discount on photoshoots',
+        'Access to all filters',
+        'Priority booking',
+        'Free photo editing',
+        '12-month gallery access'
+      ]
     },
     vip: {
       min: 251,
       max: Infinity,
       color: 'purple-600',
-      perks: ['20% discount on photoshoots', 'Access to all features', 'Priority booking', 'Free photo editing', 'Annual free photoshoot']
+      perks: [
+        'All gold benefits',
+        '20% discount on photoshoots',
+        'Access to all features',
+        'VIP priority booking',
+        'Free photo editing',
+        'Annual free photoshoot',
+        'Lifetime gallery access'
+      ]
     }
   }
 };
@@ -79,4 +110,55 @@ export function pointsToNextTier(currentPoints: number): { nextTier: MembershipT
   
   const pointsNeeded = pointsConfig.tiers[nextTier].min - currentPoints;
   return { nextTier, pointsNeeded };
+}
+
+// Calculate discount based on membership tier
+export function calculateDiscount(basePrice: number, membershipTier: MembershipTier): {
+  discountPercent: number;
+  discountAmount: number;
+  finalPrice: number;
+} {
+  let discountPercent = 0;
+  
+  switch (membershipTier) {
+    case 'bronze':
+      discountPercent = 5;
+      break;
+    case 'silver':
+      discountPercent = 10;
+      break;
+    case 'gold':
+      discountPercent = 15;
+      break;
+    case 'vip':
+      discountPercent = 20;
+      break;
+    default:
+      discountPercent = 0;
+  }
+  
+  const discountAmount = (basePrice * discountPercent) / 100;
+  const finalPrice = basePrice - discountAmount;
+  
+  return {
+    discountPercent,
+    discountAmount,
+    finalPrice
+  };
+}
+
+// Get gallery access duration in days based on membership tier
+export function getGalleryAccessDuration(membershipTier: MembershipTier): number {
+  switch (membershipTier) {
+    case 'bronze':
+      return 90; // 3 months
+    case 'silver':
+      return 180; // 6 months
+    case 'gold':
+      return 365; // 12 months
+    case 'vip':
+      return 36500; // ~100 years (essentially lifetime)
+    default:
+      return 30; // 30 days for free tier
+  }
 }

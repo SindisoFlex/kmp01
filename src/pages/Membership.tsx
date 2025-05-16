@@ -2,64 +2,71 @@
 import React from "react";
 import PageLayout from "@/components/layout/PageLayout";
 import Hero from "@/components/ui/Hero";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/contexts/AuthContext";
+import GuestQuoteForm from "@/components/auth/GuestQuoteForm";
+import MemberBenefits from "@/components/membership/MemberBenefits";
+import AuthDialog from "@/components/auth/AuthDialog";
 
 const Membership: React.FC = () => {
+  const { isAuthenticated, user } = useAuth();
+  
   const plans = [
     {
       name: "Basic",
-      price: "$49",
-      period: "per month",
-      description: "Perfect for small businesses and startups.",
+      price: "Free",
+      period: "",
+      description: "Perfect for occasional clients and first-time customers.",
       features: [
-        "1 project per month",
-        "Basic design customization",
-        "48-hour response time",
-        "Email support",
-        "Monthly progress reports",
+        "Personal account",
+        "Online booking",
+        "Access to your photo galleries",
+        "Basic photo downloads",
+        "30-day gallery access",
       ],
-      buttonText: "Get Started",
+      buttonText: "Sign Up Free",
       buttonVariant: "outline" as const,
       popular: false,
     },
     {
-      name: "Professional",
-      price: "$149",
+      name: "Premium",
+      price: "R149",
       period: "per month",
-      description: "Ideal for growing businesses and teams.",
+      description: "Ideal for regular clients who value photography services.",
       features: [
-        "3 projects per month",
-        "Advanced design customization",
-        "24-hour response time",
-        "Email and phone support",
-        "Weekly progress reports",
-        "Priority queue",
-        "Dedicated account manager",
+        "All Basic features",
+        "Priority booking slots",
+        "10% discount on all services",
+        "Extended editing options",
+        "6-month gallery access",
+        "Priority support",
+        "Monthly special offers",
       ],
-      buttonText: "Subscribe Now",
+      buttonText: "Become Premium",
       buttonVariant: "default" as const,
       popular: true,
     },
     {
-      name: "Enterprise",
-      price: "$349",
+      name: "VIP",
+      price: "R349",
       period: "per month",
-      description: "For organizations with complex requirements.",
+      description: "For our most devoted clients who demand the very best.",
       features: [
-        "Unlimited projects",
-        "Full design customization",
-        "12-hour response time",
-        "24/7 priority support",
-        "Real-time progress tracking",
-        "VIP queue",
-        "Dedicated team",
-        "Strategic consulting",
+        "All Premium features",
+        "VIP booking slots",
+        "20% discount on all services",
+        "Unlimited editing options",
+        "Lifetime gallery access",
+        "24/7 VIP support",
+        "Annual free photoshoot",
+        "Personal photography consultant",
       ],
-      buttonText: "Contact Sales",
+      buttonText: "Go VIP",
       buttonVariant: "outline" as const,
       popular: false,
     },
@@ -68,27 +75,27 @@ const Membership: React.FC = () => {
   const faqs = [
     {
       question: "What does the membership include?",
-      answer: "Our membership includes access to our design and development services based on your chosen plan. This includes website and app design, development work, revisions, and ongoing support according to your plan's specifications.",
+      answer: "Our membership includes priority booking, special discounts, extended gallery access, and various perks based on your membership tier. Each tier offers increasingly valuable benefits for our clients.",
     },
     {
-      question: "Can I upgrade my plan later?",
-      answer: "Yes, you can upgrade your plan at any time. The new pricing will be prorated for the remainder of your billing cycle. Simply contact our support team or use the account settings to upgrade.",
+      question: "How does the loyalty points system work?",
+      answer: "You earn points with every booking and purchase. For every R5 spent, you earn 1 loyalty point. These points contribute to your membership tier and can unlock special rewards and benefits.",
     },
     {
-      question: "Is there a long-term commitment?",
-      answer: "No, all our plans are month-to-month with no long-term commitment required. You can cancel at any time, effective at the end of your current billing cycle.",
+      question: "Is there a free option available?",
+      answer: "Yes, our Basic membership is completely free and gives you access to essential features like online booking, personal account management, and basic gallery access.",
     },
     {
-      question: "How do I request a project?",
-      answer: "Once you're a member, you can submit project requests through your client dashboard. Our team will review your request and begin working according to your plan's timeline and priority level.",
+      question: "How long can I access my photo galleries?",
+      answer: "Gallery access depends on your membership tier: Basic (30 days), Premium (6 months), and VIP (lifetime access). You can also extend access for R100 per year if needed.",
     },
     {
-      question: "What if I need more projects than my plan allows?",
-      answer: "If you need additional projects beyond your plan's allocation, you can purchase one-time project credits or temporarily upgrade to a higher tier plan.",
+      question: "Can I upgrade my membership later?",
+      answer: "Yes, you can upgrade your membership at any time. The new benefits will be applied immediately to your account.",
     },
     {
-      question: "How does the revision process work?",
-      answer: "Each project includes a specified number of revision rounds based on your membership plan. Additional revisions can be requested for an extra fee if needed.",
+      question: "What payment methods do you accept for memberships?",
+      answer: "We accept credit cards, debit cards, EFT payments, and direct bank transfers for membership subscriptions.",
     },
   ];
 
@@ -96,74 +103,99 @@ const Membership: React.FC = () => {
     <PageLayout>
       {/* Hero Section */}
       <Hero
-        title="Membership Plans"
-        description="Join our membership program for ongoing design and development support at a predictable monthly rate."
+        title="Membership & Loyalty"
+        description="Join our membership program for exclusive benefits, discounts, and personalized photography services."
         bgClass="bg-primary/5"
       />
 
-      {/* Pricing Section */}
+      {/* Main Content */}
       <section className="section-padding">
         <div className="page-container">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">Choose Your Plan</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Select the membership plan that best suits your business needs and scale up as you grow.
-            </p>
-          </div>
+          {isAuthenticated && user && user.role !== 'guest' ? (
+            <MemberBenefits />
+          ) : (
+            <Tabs defaultValue="membership" className="max-w-5xl mx-auto">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
+                <TabsTrigger value="membership">Membership Plans</TabsTrigger>
+                <TabsTrigger value="quote">Request a Quote</TabsTrigger>
+              </TabsList>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {plans.map((plan, index) => (
-              <Card
-                key={index}
-                className={`overflow-hidden ${
-                  plan.popular
-                    ? "border-primary shadow-lg relative"
-                    : "border"
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
-                    Most Popular
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground ml-1">
-                      {plan.period}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground mt-2">
-                    {plan.description}
+              {/* Membership Plans Tab */}
+              <TabsContent value="membership">
+                <div className="text-center mb-8">
+                  <h2 className="mb-4">Choose Your Plan</h2>
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    Select the membership tier that best suits your needs and unlock exclusive benefits.
                   </p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center">
-                        <Check className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    asChild
-                    variant={plan.buttonVariant}
-                    className="w-full"
-                  >
-                    <Link to="/contact">{plan.buttonText}</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {plans.map((plan, index) => (
+                    <Card
+                      key={index}
+                      className={`overflow-hidden ${
+                        plan.popular
+                          ? "border-primary shadow-lg relative"
+                          : "border"
+                      }`}
+                    >
+                      {plan.popular && (
+                        <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
+                          Most Popular
+                        </div>
+                      )}
+                      <CardHeader>
+                        <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                        <div className="mt-4">
+                          <span className="text-4xl font-bold">{plan.price}</span>
+                          <span className="text-muted-foreground ml-1">
+                            {plan.period}
+                          </span>
+                        </div>
+                        <p className="text-muted-foreground mt-2">
+                          {plan.description}
+                        </p>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="space-y-3">
+                          {plan.features.map((feature, i) => (
+                            <li key={i} className="flex items-center">
+                              <Check className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                      <CardFooter>
+                        <AuthDialog 
+                          triggerElement={
+                            <Button
+                              variant={plan.buttonVariant}
+                              className="w-full"
+                            >
+                              {plan.buttonText}
+                            </Button>
+                          }
+                          defaultTab="register"
+                        />
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              {/* Quote Request Tab */}
+              <TabsContent value="quote">
+                <div className="max-w-xl mx-auto">
+                  <GuestQuoteForm />
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section - show for everyone */}
       <section className="section-padding bg-muted/30">
         <div className="page-container">
           <div className="text-center mb-12">
@@ -176,34 +208,34 @@ const Membership: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: "Predictable Pricing",
-                description: "Know exactly what you'll pay each month with no surprises or hidden fees.",
-                icon: "💰",
-              },
-              {
-                title: "Priority Support",
-                description: "Get faster responses and dedicated support for all your projects.",
+                title: "Loyalty Points",
+                description: "Earn points with every purchase that contribute to your membership tier and unlock exclusive rewards.",
                 icon: "⭐",
               },
               {
-                title: "Flexible Scaling",
-                description: "Easily scale your services up or down as your business needs change.",
-                icon: "📈",
+                title: "Priority Booking",
+                description: "Get first access to our calendar and secure your preferred time slots before they're available to others.",
+                icon: "📅",
               },
               {
-                title: "Dedicated Team",
-                description: "Work with the same team who understands your brand and vision.",
-                icon: "👥",
+                title: "Special Discounts",
+                description: "Enjoy membership-exclusive discounts on all our photography services and products.",
+                icon: "💰",
               },
               {
-                title: "Expedited Delivery",
-                description: "Get your projects completed faster with our streamlined process.",
-                icon: "⚡",
+                title: "Extended Gallery Access",
+                description: "Keep your precious memories accessible for longer periods depending on your membership tier.",
+                icon: "🖼️",
               },
               {
-                title: "Strategic Partnership",
-                description: "We become an extension of your team, aligned with your goals.",
+                title: "Premium Support",
+                description: "Get faster responses and personalized support for all your photography needs.",
                 icon: "🤝",
+              },
+              {
+                title: "Exclusive Events",
+                description: "Be invited to member-only events, workshops, and special photography sessions.",
+                icon: "✨",
               },
             ].map((benefit, index) => (
               <Card key={index} className="border-0 shadow-sm">
@@ -245,13 +277,18 @@ const Membership: React.FC = () => {
       <section className="section-padding bg-primary/10">
         <div className="page-container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="mb-4">Ready to Get Started?</h2>
+            <h2 className="mb-4">Ready to Join Our Membership?</h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Join our membership program today and experience the benefits of having a dedicated design and development team.
+              Start enjoying exclusive benefits today and take your photography experience to the next level.
             </p>
-            <Button asChild size="lg">
-              <Link to="/contact">Contact Us Today</Link>
-            </Button>
+            <AuthDialog 
+              triggerElement={
+                <Button size="lg">
+                  Sign Up Now
+                </Button>
+              }
+              defaultTab="register"
+            />
           </div>
         </div>
       </section>

@@ -43,6 +43,47 @@ const UserMenu: React.FC = () => {
     );
   }
 
+  // If guest user, show different menu options
+  if (user.role === 'guest') {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" className="relative rounded-full">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel>
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">{user.name}</p>
+              <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+            </div>
+            <div className="mt-2 flex items-center">
+              <span className="text-xs bg-amber-500/10 text-amber-500 rounded-full px-2 py-0.5">
+                Guest Access
+              </span>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <AuthDialog 
+              triggerElement={
+                <button className="w-full text-left cursor-pointer">Create Full Account</button>
+              }
+              defaultTab="register"
+            />
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-500 focus:text-red-500">
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
+  // Regular user menu
   const userInitials = user.name
     .split(' ')
     .map((n) => n[0])
@@ -54,6 +95,22 @@ const UserMenu: React.FC = () => {
   
   // Get gallery count for the badge
   const galleryCount = mockGalleries.length;
+
+  // Get tier badge styling based on membership tier
+  const getTierBadgeStyle = () => {
+    switch (currentTier) {
+      case 'bronze':
+        return 'bg-amber-600/10 text-amber-600';
+      case 'silver':
+        return 'bg-gray-400/10 text-gray-400';
+      case 'gold':
+        return 'bg-yellow-500/10 text-yellow-500';
+      case 'vip':
+        return 'bg-purple-600/10 text-purple-600';
+      default:
+        return 'bg-primary/10 text-primary';
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -71,9 +128,12 @@ const UserMenu: React.FC = () => {
             <p className="text-sm font-medium leading-none">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
-          <div className="mt-2 flex items-center">
-            <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5 capitalize">
+          <div className="mt-2 flex items-center space-x-2">
+            <span className={`text-xs rounded-full px-2 py-0.5 capitalize ${getTierBadgeStyle()}`}>
               {currentTier} Tier
+            </span>
+            <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">
+              {user.points} Points
             </span>
           </div>
         </DropdownMenuLabel>
@@ -101,6 +161,9 @@ const UserMenu: React.FC = () => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/membership" className="cursor-pointer">Membership Benefits</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/dashboard/gallery-settings" className="cursor-pointer">Gallery Settings</Link>
         </DropdownMenuItem>

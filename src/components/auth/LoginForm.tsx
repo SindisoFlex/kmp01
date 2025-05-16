@@ -6,7 +6,7 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Facebook, Mail, Loader2 } from "lucide-react";
+import { Facebook, Mail, Loader2, MessageSquare } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
 
@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
       await login(values.email, values.password);
       toast({
         title: "Login successful",
-        description: "Welcome back!",
+        description: "Welcome back to StudioX!",
       });
     } catch (error) {
       toast({
@@ -58,7 +58,7 @@ const LoginForm: React.FC = () => {
       await socialLogin(provider);
       toast({
         title: "Login successful",
-        description: "Welcome back!",
+        description: "Welcome back to StudioX!",
       });
     } catch (error) {
       toast({
@@ -114,10 +114,7 @@ const LoginForm: React.FC = () => {
             disabled={isLoading}
           >
             {isLoading && loginMethod === 'social' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M17.415 14.382c-.298-.149-1.759-.867-2.031-.967-.272-.099-.47-.148-.669.15-.198.296-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.497.1-.198.05-.371-.025-.52-.074-.149-.668-1.612-.916-2.207-.241-.579-.486-.5-.668-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.57-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-              <path d="M20.52 3.449C12.831-3.268.521 1.375.461 11.94c-.02 1.5.295 2.993.872 4.377L.051 24l7.851-2.062a11.786 11.786 0 005.595 1.425h.005c7.82-.55 13.557-7.813 11.947-15.613-1.055-5.167-5.888-9.024-10.93-8.825l.002-.476zM11.9 21.386c-2.119-.125-4.188-.767-6.041-2.277l-.816-.478-6.039 1.584 1.663-5.924-.576-.906c-1.646-2.57-2.338-7.228.916-11.277C3.93 1.004 5.741-.006 7.7.15c-1.95 7.812 5.384 13.056 9.961 11.386-1.646 5.699-3.665 9.849-5.761 9.849v.001z" fill="#25D366"/>
-            </svg>
+            <MessageSquare className="h-5 w-5 mr-2 text-green-500" />
             WhatsApp
           </Button>
           
