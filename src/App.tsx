@@ -61,6 +61,7 @@ const App = () => (
                 <Route index element={<DashboardIndex />} />
                 <Route path="bookings" element={<DashboardBookings />} />
                 <Route path="gallery" element={<DashboardGallery />} />
+                <Route path="gallery/:galleryId" element={<DashboardGallery />} />
                 <Route path="points" element={<PointsDashboard />} />
                 <Route path="gallery-settings" element={<GallerySettings />} />
                 {/* Add more client dashboard routes as needed */}

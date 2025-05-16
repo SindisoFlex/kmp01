@@ -1,193 +1,241 @@
 
-import React from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Palette, Image } from "lucide-react";
-import { useTheme, ThemeColor, ThemeLayout } from "@/contexts/ThemeContext";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Separator } from "@/components/ui/separator";
+import { useTheme } from "@/contexts/ThemeContext";
+import { toast } from "@/hooks/use-toast";
+import { ArrowLeft, Check } from "lucide-react";
+import { MediaVisibility, ServiceCategory } from "@/utils/galleryUtils";
+import { 
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 const GallerySettings: React.FC = () => {
   const { color, layout, setColor, setLayout, applyTheme } = useTheme();
+  const [defaultVisibility, setDefaultVisibility] = useState<MediaVisibility>('private');
+  const [autoExpiration, setAutoExpiration] = useState(true);
+  const [compressDownloads, setCompressDownloads] = useState(true);
+  const [defaultWatermark, setDefaultWatermark] = useState(false);
+  const [preferredCategory, setPreferredCategory] = useState<ServiceCategory>('portrait');
   
-  const colorOptions: { value: ThemeColor; label: string; bgClass: string }[] = [
-    { value: 'default', label: 'Default', bgClass: 'bg-primary' },
-    { value: 'blue', label: 'Ocean Blue', bgClass: 'bg-blue-500' },
-    { value: 'purple', label: 'Royal Purple', bgClass: 'bg-purple-500' },
-    { value: 'green', label: 'Forest Green', bgClass: 'bg-green-500' },
-    { value: 'pink', label: 'Soft Pink', bgClass: 'bg-pink-500' },
-    { value: 'orange', label: 'Sunset Orange', bgClass: 'bg-orange-500' }
-  ];
-
-  const layoutOptions: { value: ThemeLayout; label: string; description: string }[] = [
-    { 
-      value: 'grid', 
-      label: 'Grid', 
-      description: 'Traditional grid layout with equal-sized photos'
-    },
-    { 
-      value: 'masonry', 
-      label: 'Masonry', 
-      description: 'Pinterest-style layout that preserves image ratios'
-    },
-    { 
-      value: 'carousel', 
-      label: 'Carousel', 
-      description: 'Horizontal sliding galleries for each session'
-    }
-  ];
+  const handleSaveSettings = () => {
+    // In a real app, this would save settings to a database
+    applyTheme();
+    
+    // Simulating saving other settings
+    localStorage.setItem('defaultVisibility', defaultVisibility);
+    localStorage.setItem('autoExpiration', String(autoExpiration));
+    localStorage.setItem('compressDownloads', String(compressDownloads));
+    localStorage.setItem('defaultWatermark', String(defaultWatermark));
+    localStorage.setItem('preferredCategory', preferredCategory);
+    
+    toast({
+      title: "Settings Saved",
+      description: "Your gallery preferences have been updated.",
+    });
+  };
   
-  // Sample photos for preview
-  const samplePhotos = [
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80",
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80",
-    "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80",
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80"
-  ];
-
   return (
-    <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Gallery Customization</h1>
-        <Button onClick={applyTheme}>Save Changes</Button>
+    <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-4xl mx-auto">
+      <div className="mb-6">
+        <Link to="/dashboard/gallery" className="text-sm text-muted-foreground hover:underline flex items-center gap-1 mb-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Gallery
+        </Link>
+        <h1 className="text-2xl font-bold">Gallery Settings</h1>
+        <p className="text-muted-foreground">
+          Customize how your photo galleries appear and function.
+        </p>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Color Theme</CardTitle>
-                <CardDescription>Choose a color palette for your gallery</CardDescription>
-              </div>
-              <Palette className="h-6 w-6 text-primary" />
-            </div>
+            <CardTitle>Appearance & Layout</CardTitle>
+            <CardDescription>
+              Choose how your gallery looks and feels.
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <RadioGroup 
-              value={color} 
-              onValueChange={(value) => setColor(value as ThemeColor)}
-              className="grid grid-cols-2 gap-4"
-            >
-              {colorOptions.map((option) => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={option.value} id={`color-${option.value}`} />
-                  <Label 
-                    htmlFor={`color-${option.value}`}
-                    className="flex items-center"
-                  >
-                    <span className={`w-4 h-4 rounded-full ${option.bgClass} mr-2`} />
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium mb-3">Color Theme</h3>
+                <RadioGroup 
+                  defaultValue={color} 
+                  value={color}
+                  onValueChange={(val) => setColor(val as any)} 
+                  className="flex flex-wrap gap-3"
+                >
+                  {['default', 'blue', 'green', 'purple', 'pink', 'orange'].map((c) => (
+                    <div key={c} className="flex items-center space-x-2">
+                      <RadioGroupItem value={c} id={`color-${c}`} />
+                      <Label htmlFor={`color-${c}`} className="capitalize">{c}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium mb-3">Layout Style</h3>
+                <RadioGroup 
+                  defaultValue={layout} 
+                  value={layout}
+                  onValueChange={(val) => setLayout(val as any)} 
+                  className="flex flex-wrap gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="grid" id="layout-grid" />
+                    <Label htmlFor="layout-grid">Grid</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="masonry" id="layout-masonry" />
+                    <Label htmlFor="layout-masonry">Masonry</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="carousel" id="layout-carousel" />
+                    <Label htmlFor="layout-carousel">Carousel</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Layout Style</CardTitle>
-                <CardDescription>Set how your photos are displayed</CardDescription>
-              </div>
-              <Image className="h-6 w-6 text-primary" />
-            </div>
+            <CardTitle>Default Settings</CardTitle>
+            <CardDescription>
+              Set your preferences for all new galleries and uploads.
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <RadioGroup 
-              value={layout} 
-              onValueChange={(value) => setLayout(value as ThemeLayout)}
-              className="space-y-4"
-            >
-              {layoutOptions.map((option) => (
-                <div key={option.value} className="flex items-start space-x-2 border p-3 rounded-md hover:bg-accent">
-                  <RadioGroupItem value={option.value} id={`layout-${option.value}`} className="mt-1" />
-                  <div className="flex-1">
-                    <Label htmlFor={`layout-${option.value}`} className="font-medium">
-                      {option.label}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">{option.description}</p>
-                  </div>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="default-visibility" className="text-sm font-medium">Default Visibility</Label>
+                  <p className="text-xs text-muted-foreground">Choose whether new uploads are private or public by default.</p>
                 </div>
-              ))}
-            </RadioGroup>
+                <Select 
+                  value={defaultVisibility}
+                  onValueChange={(val) => setDefaultVisibility(val as MediaVisibility)}
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select visibility" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Visibility</SelectLabel>
+                      <SelectItem value="private">Private</SelectItem>
+                      <SelectItem value="public">Public</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="preferred-category" className="text-sm font-medium">Preferred Category</Label>
+                  <p className="text-xs text-muted-foreground">Your default gallery category.</p>
+                </div>
+                <Select 
+                  value={preferredCategory}
+                  onValueChange={(val) => setPreferredCategory(val as ServiceCategory)}
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Categories</SelectLabel>
+                      <SelectItem value="portrait">Portrait</SelectItem>
+                      <SelectItem value="wedding">Wedding</SelectItem>
+                      <SelectItem value="family">Family</SelectItem>
+                      <SelectItem value="event">Event</SelectItem>
+                      <SelectItem value="commercial">Commercial</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Separator className="my-4" />
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="auto-expiration" className="text-sm font-medium">Automatic Expiration</Label>
+                  <p className="text-xs text-muted-foreground">Galleries will expire after 24 months unless extended.</p>
+                </div>
+                <Switch 
+                  id="auto-expiration" 
+                  checked={autoExpiration}
+                  onCheckedChange={setAutoExpiration}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="compress-downloads" className="text-sm font-medium">Compress Downloads</Label>
+                  <p className="text-xs text-muted-foreground">Automatically compress images when downloading multiple files.</p>
+                </div>
+                <Switch 
+                  id="compress-downloads" 
+                  checked={compressDownloads}
+                  onCheckedChange={setCompressDownloads}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="default-watermark" className="text-sm font-medium">Default Watermark</Label>
+                  <p className="text-xs text-muted-foreground">Apply watermark to public images automatically.</p>
+                </div>
+                <Switch 
+                  id="default-watermark" 
+                  checked={defaultWatermark}
+                  onCheckedChange={setDefaultWatermark}
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Gallery Expiration</CardTitle>
+            <CardDescription>
+              Manage your gallery expiration settings. Galleries expire after 24 months.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="text-sm">
+              Your galleries will expire after 24 months from the date they were created. You can extend the availability of your galleries for R100 per year.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Expired galleries can be renewed within 30 days of expiration. After that period, they may be permanently deleted.
+            </p>
+          </CardContent>
+        </Card>
+        
+        <div className="flex justify-end space-x-4">
+          <Button variant="outline" asChild>
+            <Link to="/dashboard/gallery">Cancel</Link>
+          </Button>
+          <Button onClick={handleSaveSettings}>
+            <Check className="h-4 w-4 mr-2" />
+            Save Settings
+          </Button>
+        </div>
       </div>
-      
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Gallery Preview</CardTitle>
-          <CardDescription>See how your gallery will look with the selected theme</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="desktop" className="mb-4">
-            <TabsList>
-              <TabsTrigger value="desktop">Desktop</TabsTrigger>
-              <TabsTrigger value="mobile">Mobile</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          
-          <div className={`border p-4 rounded-lg ${color === 'default' ? '' : `border-${color}-200 bg-${color}-50 bg-opacity-10`}`}>
-            <h3 className="text-lg font-medium mb-4">Portrait Session - May 2025</h3>
-            
-            {layout === 'grid' && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {samplePhotos.map((photo, i) => (
-                  <div key={i} className="overflow-hidden rounded-md border">
-                    <AspectRatio ratio={1 / 1}>
-                      <img 
-                        src={photo} 
-                        alt={`Sample ${i+1}`} 
-                        className={`h-full w-full object-cover transition-all hover:scale-105 ${color !== 'default' ? `hover:shadow-${color}-200` : ''}`} 
-                      />
-                    </AspectRatio>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            {layout === 'masonry' && (
-              <div className="columns-2 sm:columns-4 gap-2">
-                {samplePhotos.map((photo, i) => (
-                  <div key={i} className="break-inside-avoid mb-2">
-                    <img 
-                      src={photo} 
-                      alt={`Sample ${i+1}`} 
-                      className={`w-full rounded-md border transition-all hover:shadow-md ${color !== 'default' ? `hover:shadow-${color}-200` : ''}`} 
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            {layout === 'carousel' && (
-              <div className="flex overflow-x-auto space-x-2 pb-2">
-                {samplePhotos.map((photo, i) => (
-                  <div key={i} className="flex-none w-52">
-                    <AspectRatio ratio={3 / 4}>
-                      <img 
-                        src={photo} 
-                        alt={`Sample ${i+1}`} 
-                        className={`h-full w-full rounded-md object-cover border ${color !== 'default' ? `hover:border-${color}-400` : ''}`} 
-                      />
-                    </AspectRatio>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter className="border-t pt-4">
-          <p className="text-sm text-muted-foreground">
-            Note: Actual gallery appearance may vary slightly based on your photos.
-          </p>
-        </CardFooter>
-      </Card>
     </div>
   );
 };
