@@ -13,6 +13,7 @@ import Portfolio from "./pages/Portfolio";
 import Membership from "./pages/Membership";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import AIChat from "./components/ai/AIChat";
 
 // Client dashboard
 import DashboardLayout from "./components/dashboard/DashboardLayout";
@@ -28,6 +29,7 @@ import InvoiceDetailPage from "./pages/Dashboard/InvoiceDetail";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminLogin from "./pages/Admin/Login";
 import AdminDashboard from "./pages/Admin/Index";
+import AdminAnalytics from "./pages/Admin/Analytics";
 import RoleGuard from "./components/auth/RoleGuard";
 
 // Staff dashboard
@@ -77,6 +79,7 @@ const App = () => (
                 </RoleGuard>
               }>
                 <Route index element={<AdminDashboard />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
                 {/* Add more admin dashboard routes as needed */}
               </Route>
               
@@ -93,6 +96,9 @@ const App = () => (
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            
+            {/* AI Chat Assistant - Available on all pages */}
+            <AIChat />
           </BrowserRouter>
         </ThemeProvider>
       </AuthProvider>
