@@ -1,14 +1,16 @@
 
 import React from "react";
-import { Check, Smartphone, Volume2, Volume1, VolumeX, Palette, LayoutGrid } from "lucide-react";
+import { Palette, LayoutGrid, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme, ThemeColor, ThemeLayout, BrandColor, SoundPreference } from "@/contexts/ThemeContext";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useIsMobile } from "@/hooks/use-mobile";
+import ColorSelection from "./theme/ColorSelection";
+import LayoutSelection from "./theme/LayoutSelection";
+import BrandColorSelection from "./theme/BrandColorSelection";
+import MobileOptimization from "./theme/MobileOptimization";
+import SoundPreferences from "./theme/SoundPreferences";
 
 const ThemeSettings: React.FC = () => {
   const { 
@@ -27,11 +29,6 @@ const ThemeSettings: React.FC = () => {
   } = useTheme();
   
   const isMobile = useIsMobile();
-  
-  const themeColors: ThemeColor[] = ['default', 'blue', 'purple', 'green', 'pink', 'orange', 'red'];
-  const layoutOptions: ThemeLayout[] = ['grid', 'masonry', 'carousel'];
-  const brandColors: BrandColor[] = ['default', 'black', 'red', 'white'];
-  const soundOptions: SoundPreference[] = ['all', 'minimal', 'none'];
   
   const handleColorClick = (newColor: ThemeColor) => {
     setColor(newColor);
@@ -96,108 +93,39 @@ const ThemeSettings: React.FC = () => {
           
           {/* Colors Tab */}
           <TabsContent value="colors" className="pt-6">
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-3">Theme Color</h3>
-              <div className="flex flex-wrap gap-3">
-                {themeColors.map((themeColor) => (
-                  <Button
-                    key={themeColor}
-                    type="button"
-                    variant={color === themeColor ? "default" : "outline"}
-                    className={`w-20 h-10 relative ${themeColor !== 'default' ? `bg-${themeColor}-500 hover:bg-${themeColor}-600` : ''}`}
-                    onClick={() => handleColorClick(themeColor)}
-                  >
-                    {color === themeColor && (
-                      <Check className="h-4 w-4 absolute right-2 top-2" />
-                    )}
-                    <span className="capitalize">{themeColor}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
+            <ColorSelection 
+              selectedColor={color} 
+              onColorSelect={handleColorClick} 
+            />
           </TabsContent>
           
           {/* Layout Tab */}
           <TabsContent value="layout" className="pt-6">
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-3">Gallery Layout</h3>
-              <RadioGroup value={layout} onValueChange={(value) => handleLayoutClick(value as ThemeLayout)} className="flex flex-col gap-3">
-                {layoutOptions.map((layoutOption) => (
-                  <div key={layoutOption} className="flex items-center space-x-2">
-                    <RadioGroupItem value={layoutOption} id={`layout-${layoutOption}`} />
-                    <Label htmlFor={`layout-${layoutOption}`} className="capitalize">{layoutOption}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
+            <LayoutSelection 
+              selectedLayout={layout}
+              onLayoutSelect={handleLayoutClick}
+            />
           </TabsContent>
           
           {/* Branding Tab */}
           <TabsContent value="branding" className="pt-6">
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-3">Brand Colors</h3>
-              <div className="flex flex-wrap gap-3">
-                {brandColors.map((color) => (
-                  <Button
-                    key={color}
-                    type="button"
-                    variant="outline"
-                    className={`
-                      w-20 h-10 relative 
-                      ${color === 'black' ? 'bg-brand-black text-white hover:bg-gray-800' : ''}
-                      ${color === 'red' ? 'bg-brand-red text-white hover:bg-red-600' : ''}
-                      ${color === 'white' ? 'bg-white text-black border-gray-200 hover:bg-gray-100' : ''}
-                      ${brandColor === color ? 'ring-2 ring-primary ring-offset-2' : ''}
-                    `}
-                    onClick={() => handleBrandColorClick(color)}
-                  >
-                    <span className="capitalize">{color}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
+            <BrandColorSelection 
+              selectedBrandColor={brandColor}
+              onBrandColorSelect={handleBrandColorClick}
+            />
           </TabsContent>
           
           {/* Preferences Tab */}
           <TabsContent value="preferences" className="pt-6 space-y-6">
-            <div>
-              <h3 className="text-sm font-medium mb-3">Mobile Optimization</h3>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="mobile-optimization" className="font-medium">Optimize for mobile</Label>
-                  <p className="text-sm text-muted-foreground">Enable simplified layouts for small screens</p>
-                </div>
-                <Switch
-                  id="mobile-optimization"
-                  checked={isMobileOptimized}
-                  onCheckedChange={handleOptimizationToggle}
-                />
-              </div>
-            </div>
+            <MobileOptimization 
+              isOptimized={isMobileOptimized}
+              onToggleOptimization={handleOptimizationToggle}
+            />
             
-            <div>
-              <h3 className="text-sm font-medium mb-3">Sound Effects</h3>
-              <RadioGroup value={soundPreference} onValueChange={(value) => handleSoundPreferenceChange(value as SoundPreference)} className="flex flex-col gap-3">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="all" id="sound-all" />
-                  <Label htmlFor="sound-all" className="flex items-center gap-2">
-                    <Volume2 className="h-4 w-4" /> All sounds
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="minimal" id="sound-minimal" />
-                  <Label htmlFor="sound-minimal" className="flex items-center gap-2">
-                    <Volume1 className="h-4 w-4" /> Minimal sounds
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="none" id="sound-none" />
-                  <Label htmlFor="sound-none" className="flex items-center gap-2">
-                    <VolumeX className="h-4 w-4" /> No sounds
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
+            <SoundPreferences
+              selectedPreference={soundPreference}
+              onPreferenceChange={handleSoundPreferenceChange}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>
