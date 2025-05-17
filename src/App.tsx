@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { usePreloadEssentials } from "@/hooks/use-preload";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -37,73 +38,85 @@ import StaffLayout from "./components/staff/StaffLayout";
 import StaffLogin from "./pages/Staff/Login";
 import StaffDashboard from "./pages/Staff/Index";
 
-const queryClient = new QueryClient();
+// Create a new QueryClient with optimized settings
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <ThemeProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="/membership" element={<Membership />} />
-              <Route path="/contact" element={<Contact />} />
+const App = () => {
+  // Preload essential resources
+  usePreloadEssentials();
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/membership" element={<Membership />} />
+                <Route path="/contact" element={<Contact />} />
+                
+                {/* Authentication Routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/staff/login" element={<StaffLogin />} />
+                
+                {/* Client Dashboard Routes */}
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<DashboardIndex />} />
+                  <Route path="bookings" element={<DashboardBookings />} />
+                  <Route path="gallery" element={<DashboardGallery />} />
+                  <Route path="gallery/:galleryId" element={<DashboardGallery />} />
+                  <Route path="points" element={<PointsDashboard />} />
+                  <Route path="gallery-settings" element={<GallerySettings />} />
+                  <Route path="invoices" element={<InvoicesDashboard />} />
+                  <Route path="invoices/:invoiceId" element={<InvoiceDetailPage />} />
+                </Route>
+                
+                {/* Admin Dashboard Routes - Protected */}
+                <Route path="/admin" element={
+                  <RoleGuard allowedRoles={["admin"]} redirectTo="/admin/login">
+                    <AdminLayout />
+                  </RoleGuard>
+                }>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="analytics" element={<AdminAnalytics />} />
+                </Route>
+                
+                {/* Staff Dashboard Routes - Protected */}
+                <Route path="/staff" element={
+                  <RoleGuard allowedRoles={["staff"]} redirectTo="/staff/login">
+                    <StaffLayout />
+                  </RoleGuard>
+                }>
+                  <Route index element={<StaffDashboard />} />
+                </Route>
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
               
-              {/* Authentication Routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/staff/login" element={<StaffLogin />} />
-              
-              {/* Client Dashboard Routes */}
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<DashboardIndex />} />
-                <Route path="bookings" element={<DashboardBookings />} />
-                <Route path="gallery" element={<DashboardGallery />} />
-                <Route path="gallery/:galleryId" element={<DashboardGallery />} />
-                <Route path="points" element={<PointsDashboard />} />
-                <Route path="gallery-settings" element={<GallerySettings />} />
-                <Route path="invoices" element={<InvoicesDashboard />} />
-                <Route path="invoices/:invoiceId" element={<InvoiceDetailPage />} />
-              </Route>
-              
-              {/* Admin Dashboard Routes - Protected */}
-              <Route path="/admin" element={
-                <RoleGuard allowedRoles={["admin"]} redirectTo="/admin/login">
-                  <AdminLayout />
-                </RoleGuard>
-              }>
-                <Route index element={<AdminDashboard />} />
-                <Route path="analytics" element={<AdminAnalytics />} />
-                {/* Add more admin dashboard routes as needed */}
-              </Route>
-              
-              {/* Staff Dashboard Routes - Protected */}
-              <Route path="/staff" element={
-                <RoleGuard allowedRoles={["staff"]} redirectTo="/staff/login">
-                  <StaffLayout />
-                </RoleGuard>
-              }>
-                <Route index element={<StaffDashboard />} />
-                {/* Add more staff dashboard routes as needed */}
-              </Route>
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            
-            {/* AI Chat Assistant - Available on all pages */}
-            <AIChat />
-          </BrowserRouter>
-        </ThemeProvider>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+              {/* AI Chat Assistant - Available on all pages */}
+              <AIChat />
+            </BrowserRouter>
+          </ThemeProvider>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

@@ -8,9 +8,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { determineTier, pointsToNextTier } from "@/utils/pointsUtils";
 import MemberBenefits from "@/components/membership/MemberBenefits";
 import ReferralSystem from "@/components/referral/ReferralSystem";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const PointsDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { playSound } = useTheme();
+  const isMobile = useIsMobile();
   
   if (!user) return null;
   
@@ -26,11 +30,11 @@ const PointsDashboard: React.FC = () => {
   ];
   
   return (
-    <div className="container py-8 max-w-5xl">
+    <div className="container py-8 max-w-5xl animate-fade-in">
       <h1 className="text-3xl font-bold mb-6">My Points & Benefits</h1>
       
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="md:col-span-3">
+        <Card className="md:col-span-3 fancy-card">
           <CardHeader className="pb-4">
             <CardTitle>Points Overview</CardTitle>
             <CardDescription>Your current loyalty status and progress</CardDescription>
@@ -54,14 +58,14 @@ const PointsDashboard: React.FC = () => {
                   <span className="font-medium">Progress to {nextTier}</span>
                   <span className="text-primary">{pointsNeeded} points needed</span>
                 </div>
-                <Progress value={100 - (pointsNeeded / (pointsNeeded + user.points) * 100)} />
+                <Progress value={100 - (pointsNeeded / (pointsNeeded + user.points) * 100)} className="h-2" />
               </div>
             )}
           </CardContent>
         </Card>
         
-        <Tabs defaultValue="benefits" className="md:col-span-3">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="benefits" className="md:col-span-3" onValueChange={() => playSound('click')}>
+          <TabsList className={`grid w-full ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}>
             <TabsTrigger value="benefits" className="flex items-center justify-center">
               <Award className="mr-2 h-4 w-4" />
               Membership Benefits
@@ -76,12 +80,12 @@ const PointsDashboard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="benefits" className="pt-6">
+          <TabsContent value="benefits" className="pt-6 animate-fade-in">
             <MemberBenefits />
           </TabsContent>
           
-          <TabsContent value="history" className="pt-6">
-            <Card>
+          <TabsContent value="history" className="pt-6 animate-fade-in">
+            <Card className="fancy-card">
               <CardHeader>
                 <CardTitle>Points History</CardTitle>
                 <CardDescription>
@@ -90,18 +94,18 @@ const PointsDashboard: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-12 text-xs font-medium text-muted-foreground mb-2">
-                    <div className="col-span-2">Date</div>
-                    <div className="col-span-7">Activity</div>
-                    <div className="col-span-3 text-right">Points</div>
+                  <div className={`grid ${isMobile ? 'grid-cols-6' : 'grid-cols-12'} text-xs font-medium text-muted-foreground mb-2`}>
+                    <div className={`${isMobile ? 'col-span-2' : 'col-span-2'}`}>Date</div>
+                    <div className={`${isMobile ? 'col-span-3' : 'col-span-7'}`}>Activity</div>
+                    <div className={`${isMobile ? 'col-span-1' : 'col-span-3'} text-right`}>Points</div>
                   </div>
                   
                   <div className="space-y-2">
                     {pointsHistory.map(item => (
-                      <div key={item.id} className="grid grid-cols-12 py-2 border-b text-sm">
-                        <div className="col-span-2 text-muted-foreground">{item.date}</div>
-                        <div className="col-span-7">{item.description}</div>
-                        <div className="col-span-3 text-right font-medium text-primary">
+                      <div key={item.id} className={`grid ${isMobile ? 'grid-cols-6' : 'grid-cols-12'} py-2 border-b text-sm`}>
+                        <div className={`${isMobile ? 'col-span-2' : 'col-span-2'} text-muted-foreground`}>{item.date}</div>
+                        <div className={`${isMobile ? 'col-span-3' : 'col-span-7'}`}>{item.description}</div>
+                        <div className={`${isMobile ? 'col-span-1' : 'col-span-3'} text-right font-medium text-primary`}>
                           +{item.amount}
                         </div>
                       </div>
@@ -123,7 +127,7 @@ const PointsDashboard: React.FC = () => {
             </Card>
           </TabsContent>
           
-          <TabsContent value="refer" className="pt-6">
+          <TabsContent value="refer" className="pt-6 animate-fade-in">
             <ReferralSystem />
           </TabsContent>
         </Tabs>

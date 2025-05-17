@@ -94,6 +94,11 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Optimize font display */
+  h1, h2, h3, h4, h5, h6 {
+    text-rendering: optimizeLegibility;
+  }
 }
 
 @layer utilities {
@@ -103,6 +108,63 @@
   
   .section-padding {
     @apply py-12 md:py-20;
+  }
+  
+  /* Mobile optimization utilities */
+  .mobile-container {
+    @apply px-4 sm:px-6;
+  }
+  
+  .mobile-section {
+    @apply py-8 md:py-12;
+  }
+  
+  /* Custom brand color utilities */
+  .brand-red {
+    @apply text-brand-red;
+  }
+  
+  .bg-brand-red {
+    @apply bg-brand-red;
+  }
+  
+  .brand-black {
+    @apply text-brand-black;
+  }
+  
+  .bg-brand-black {
+    @apply bg-black;
+  }
+  
+  .brand-white {
+    @apply text-white;
+  }
+  
+  .bg-brand-white {
+    @apply bg-white;
+  }
+  
+  /* Layout grid utilities */
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6;
+  }
+  
+  /* Spacing utilities */
+  .spaced-y {
+    @apply space-y-6 md:space-y-8;
+  }
+  
+  .spaced-x {
+    @apply space-x-4 md:space-x-6;
+  }
+  
+  /* Glassmorphism effect */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  .dark .glass {
+    @apply bg-black/20 border-white/10;
   }
 }
 
@@ -125,7 +187,7 @@
   transition: opacity 300ms ease-in-out;
 }
 
-/* Header styles */
+/* Enhanced Header styles */
 h1, h2, h3, h4, h5, h6 {
   @apply font-bold tracking-tight;
 }
@@ -142,7 +204,7 @@ h3 {
   @apply text-2xl md:text-3xl;
 }
 
-/* Link hover styles */
+/* Enhanced link hover styles */
 .nav-link {
   @apply relative;
 }
@@ -154,4 +216,40 @@ h3 {
 
 .nav-link:hover::after {
   @apply w-full;
+}
+
+/* Card styles */
+.fancy-card {
+  @apply relative overflow-hidden rounded-lg border bg-card p-6 shadow-sm transition-all duration-200 hover:shadow-md;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .hide-on-mobile {
+    display: none;
+  }
+  
+  .mobile-only {
+    display: block;
+  }
+}
+
+@media (min-width: 641px) {
+  .mobile-only {
+    display: none;
+  }
+}
+
+/* Animation for button interactions */
+.btn-hover {
+  transition: transform 0.2s ease-in-out;
+}
+
+.btn-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* Images optimization */
+img {
+  @apply max-w-full h-auto;
 }
