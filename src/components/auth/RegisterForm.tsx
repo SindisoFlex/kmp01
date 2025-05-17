@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Facebook, Loader2, MessageSquare } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/components/ui/use-toast";
 
 const registerSchema = z.object({

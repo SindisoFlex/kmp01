@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/components/ui/use-toast";
 
 const quoteSchema = z.object({

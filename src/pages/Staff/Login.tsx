@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import StaffLoginForm from "@/components/auth/StaffLoginForm";
 import PageLayout from "@/components/layout/PageLayout";

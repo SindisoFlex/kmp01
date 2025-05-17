@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Facebook, Mail, Loader2, MessageSquare } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/components/ui/use-toast";
 
 const loginSchema = z.object({

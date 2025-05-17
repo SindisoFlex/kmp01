@@ -1,45 +1,16 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { User, UserRole, AuthContextType } from '../types/auth';
+import {
+  loginUser,
+  loginStaff,
+  loginAdmin,
+  registerUser,
+  socialLoginUser,
+  createGuestAccess
+} from '../services/authService';
 
-export type UserRole = 'client' | 'staff' | 'admin' | 'guest';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  membershipTier: 'free' | 'basic' | 'premium' | 'vip';
-  points: number;
-  profilePic?: string;
-  role: UserRole;
-  signupMethod?: 'email' | 'google' | 'facebook' | 'whatsapp';
-}
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, allowMarketing?: boolean) => Promise<void>;
-  socialLogin: (provider: 'google' | 'facebook' | 'whatsapp') => Promise<void>;
-  staffLogin: (email: string, password: string) => Promise<void>;
-  adminLogin: (email: string, password: string) => Promise<void>;
-  guestAccess: (name: string, email: string) => Promise<void>;
-  logout: () => void;
-  hasRole: (roles: UserRole | UserRole[]) => boolean;
-  updateMembershipTier: (tier: 'free' | 'basic' | 'premium' | 'vip') => void;
-  addPoints: (points: number) => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -64,31 +35,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  // Mock login function for regular clients
+  // Regular client login
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (email === 'demo@example.com' && password === 'password') {
-        const mockUser: User = {
-          id: '1',
-          name: 'Demo User',
-          email: 'demo@example.com',
-          membershipTier: 'basic',
-          points: 150,
-          profilePic: 'https://i.pravatar.cc/150?u=demo',
-          role: 'client',
-          signupMethod: 'email'
-        };
-        
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        setUser(mockUser);
-        setIsAuthenticated(true);
-      } else {
-        throw new Error('Invalid credentials');
-      }
+      const mockUser = await loginUser(email, password);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -97,32 +51,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Mock staff login function
+  // Staff login
   const staffLogin = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Fix: Modified the credential check to work with the demo credentials
-      if (email === 'staff@example.com' && password === 'staffpass') {
-        const mockUser: User = {
-          id: 'staff1',
-          name: 'Staff Member',
-          email: 'staff@example.com',
-          membershipTier: 'premium', // Not really applicable for staff
-          points: 0, // Not applicable for staff
-          profilePic: 'https://i.pravatar.cc/150?u=staff',
-          role: 'staff'
-        };
-        
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        setUser(mockUser);
-        setIsAuthenticated(true);
-        return; // Successfully logged in
-      } 
-      
-      throw new Error('Invalid staff credentials');
+      const mockUser = await loginStaff(email, password);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Staff login error:', error);
       throw error;
@@ -131,32 +67,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Mock admin login function
+  // Admin login
   const adminLogin = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Fix: Modified the credential check to work with the demo credentials
-      if (email === 'admin@example.com' && password === 'adminpass') {
-        const mockUser: User = {
-          id: 'admin1',
-          name: 'Admin User',
-          email: 'admin@example.com',
-          membershipTier: 'vip', // Not really applicable for admin
-          points: 0, // Not applicable for admin
-          profilePic: 'https://i.pravatar.cc/150?u=admin',
-          role: 'admin'
-        };
-        
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        setUser(mockUser);
-        setIsAuthenticated(true);
-        return; // Successfully logged in
-      }
-      
-      throw new Error('Invalid admin credentials');
+      const mockUser = await loginAdmin(email, password);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Admin login error:', error);
       throw error;
@@ -165,24 +83,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Mock registration function
+  // User registration
   const register = async (name: string, email: string, password: string, allowMarketing = false) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockUser: User = {
-        id: Date.now().toString(),
-        name,
-        email,
-        membershipTier: 'free',
-        points: 50, // Welcome points
-        profilePic: undefined,
-        role: 'client',
-        signupMethod: 'email'
-      };
-      
+      const mockUser = await registerUser(name, email, password, allowMarketing);
       localStorage.setItem('user', JSON.stringify(mockUser));
       setUser(mockUser);
       setIsAuthenticated(true);
@@ -194,24 +99,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Mock social login
+  // Social login
   const socialLogin = async (provider: 'google' | 'facebook' | 'whatsapp') => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockUser: User = {
-        id: Date.now().toString(),
-        name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
-        email: `user@${provider}.com`,
-        membershipTier: 'free',
-        points: 50,
-        profilePic: `https://i.pravatar.cc/150?u=${provider}${Date.now()}`,
-        role: 'client',
-        signupMethod: provider
-      };
-      
+      const mockUser = await socialLoginUser(provider);
       localStorage.setItem('user', JSON.stringify(mockUser));
       setUser(mockUser);
       setIsAuthenticated(true);
@@ -223,21 +115,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Guest access function (for quote requests)
+  // Guest access
   const guestAccess = async (name: string, email: string) => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockUser: User = {
-        id: `guest-${Date.now()}`,
-        name,
-        email,
-        membershipTier: 'free',
-        points: 0,
-        role: 'guest'
-      };
-      
+      const mockUser = await createGuestAccess(name, email);
       localStorage.setItem('user', JSON.stringify(mockUser));
       setUser(mockUser);
       setIsAuthenticated(true);
@@ -249,6 +131,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Logout
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);

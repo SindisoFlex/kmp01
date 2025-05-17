@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import StatsSummary from "@/components/admin/dashboard/StatsSummary";
 import ActivityList from "@/components/admin/dashboard/ActivityList";
 import StaffPerformance from "@/components/admin/dashboard/StaffPerformance";
