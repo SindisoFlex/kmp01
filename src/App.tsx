@@ -25,6 +25,7 @@ import PointsDashboard from "./pages/Dashboard/Points";
 import GallerySettings from "./pages/Dashboard/GallerySettings";
 import InvoicesDashboard from "./pages/Dashboard/Invoices";
 import InvoiceDetailPage from "./pages/Dashboard/InvoiceDetail";
+import ThemeSettings from "./pages/Dashboard/ThemeSettings";
 
 // Admin dashboard
 import AdminLayout from "./components/admin/AdminLayout";
@@ -84,6 +85,7 @@ const App = () => {
                   <Route path="gallery-settings" element={<GallerySettings />} />
                   <Route path="invoices" element={<InvoicesDashboard />} />
                   <Route path="invoices/:invoiceId" element={<InvoiceDetailPage />} />
+                  <Route path="theme" element={<ThemeSettings />} />
                 </Route>
                 
                 {/* Admin Dashboard Routes - Protected */}
