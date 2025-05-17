@@ -1,0 +1,70 @@
+
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-padding {
+    @apply py-12 md:py-20;
+  }
+  
+  /* Mobile optimization utilities */
+  .mobile-container {
+    @apply px-4 sm:px-6;
+  }
+  
+  .mobile-section {
+    @apply py-8 md:py-12;
+  }
+  
+  /* Custom brand color utilities */
+  .brand-red {
+    @apply text-[#ea384c];
+  }
+  
+  .bg-brand-red {
+    background-color: #ea384c;
+  }
+  
+  .brand-black {
+    @apply text-brand-black;
+  }
+  
+  .bg-brand-black {
+    @apply bg-black;
+  }
+  
+  .brand-white {
+    @apply text-white;
+  }
+  
+  .bg-brand-white {
+    @apply bg-white;
+  }
+  
+  /* Layout grid utilities */
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6;
+  }
+  
+  /* Spacing utilities */
+  .spaced-y {
+    @apply space-y-6 md:space-y-8;
+  }
+  
+  .spaced-x {
+    @apply space-x-4 md:space-x-6;
+  }
+  
+  /* Glassmorphism effect */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  .dark .glass {
+    @apply bg-black/20 border-white/10;
+  }
+}

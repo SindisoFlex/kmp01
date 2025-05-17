@@ -1,0 +1,27 @@
+
+/* Card styles */
+.fancy-card {
+  @apply relative overflow-hidden rounded-lg border bg-card p-6 shadow-sm transition-all duration-200 hover:shadow-md;
+}
+
+/* Images optimization */
+img {
+  @apply max-w-full h-auto;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .hide-on-mobile {
+    display: none;
+  }
+  
+  .mobile-only {
+    display: block;
+  }
+}
+
+@media (min-width: 641px) {
+  .mobile-only {
+    display: none;
+  }
+}
