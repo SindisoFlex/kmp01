@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -121,11 +120,11 @@
   
   /* Custom brand color utilities */
   .brand-red {
-    @apply text-brand-red;
+    @apply text-[#ea384c];
   }
   
   .bg-brand-red {
-    @apply bg-brand-red;
+    background-color: #ea384c;
   }
   
   .brand-black {
