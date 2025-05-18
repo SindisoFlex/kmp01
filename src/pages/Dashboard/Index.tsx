@@ -1,12 +1,8 @@
-
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
-import { Calendar, GalleryHorizontal, Award, Share, ChevronRight } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { determineTier, pointsToNextTier } from "@/utils/pointsUtils";
 
 const DashboardIndex: React.FC = () => {
   const { user } = useAuth();

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Award, Gift, Users } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { determineTier, pointsToNextTier } from "@/utils/pointsUtils";
 import MemberBenefits from "@/components/membership/MemberBenefits";
 import ReferralSystem from "@/components/referral/ReferralSystem";
