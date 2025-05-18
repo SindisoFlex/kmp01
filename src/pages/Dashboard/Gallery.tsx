@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { useAuth } from "@/hooks/useAuth";
-import { GalleryCollection } from '@/components/gallery/GalleryCollection';
-import { ExpirationBanner } from '@/components/gallery/ExpirationBanner';
-import { VisibilityToggle } from '@/components/gallery/VisibilityToggle';
+import GalleryCollection from '@/components/gallery/GalleryCollection';
+import ExpirationBanner from '@/components/gallery/ExpirationBanner';
+import VisibilityToggle from '@/components/gallery/VisibilityToggle';
 import { mockGalleries } from '@/utils/galleryUtils';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { CalendarDateRangePicker } from "@/components/ui/calendar";
+import { CalendarDateRangePicker } from "@/components/ui/calendar-date-range";
 import { CalendarIcon } from "lucide-react";
 
 const Gallery: React.FC = () => {
