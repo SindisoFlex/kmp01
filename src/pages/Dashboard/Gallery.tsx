@@ -50,7 +50,7 @@ const Gallery: React.FC = () => {
                 Make your gallery visible to everyone.
               </p>
             </div>
-            <VisibilityToggle isPublic={isPublic} onVisibilityChange={handleVisibilityChange} />
+            <VisibilityToggle value={isPublic} onChange={handleVisibilityChange} />
           </div>
 
           <div className="space-y-2">
@@ -64,10 +64,10 @@ const Gallery: React.FC = () => {
       </Card>
 
       {expirationDate && (
-        <ExpirationBanner expirationDate={expirationDate} />
+        <ExpirationBanner expirationDate={expirationDate.toISOString()} />
       )}
 
-      <GalleryCollection galleries={galleries} />
+      <GalleryCollection items={galleries} />
     </div>
   );
 };

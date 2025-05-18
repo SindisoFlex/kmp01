@@ -149,12 +149,12 @@ const StaffLayout: React.FC = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex flex-col w-0 flex-1 overflow-hidden">
-        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
+      <div className="flex flex-col flex-1 md:pl-64">
+        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
           <Button
             variant="outline" 
             size="sm"
-            className="px-4 md:hidden"
+            className="px-4 md:hidden ml-1 mt-3"
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>

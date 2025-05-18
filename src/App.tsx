@@ -38,6 +38,13 @@ import RoleGuard from "./components/auth/RoleGuard";
 import StaffLayout from "./components/staff/StaffLayout";
 import StaffLogin from "./pages/Staff/Login";
 import StaffDashboard from "./pages/Staff/Index";
+import StaffSchedule from "./pages/Staff/Schedule";
+import StaffClients from "./pages/Staff/Clients";
+import StaffTasks from "./pages/Staff/Tasks";
+import StaffMessages from "./pages/Staff/Messages";
+import StaffGallery from "./pages/Staff/Gallery";
+import StaffProfile from "./pages/Staff/Profile";
+import StaffSettings from "./pages/Staff/Settings";
 
 // Create a new QueryClient with optimized settings
 const queryClient = new QueryClient({
@@ -105,6 +112,13 @@ const App = () => {
                   </RoleGuard>
                 }>
                   <Route index element={<StaffDashboard />} />
+                  <Route path="schedule" element={<StaffSchedule />} />
+                  <Route path="clients" element={<StaffClients />} />
+                  <Route path="tasks" element={<StaffTasks />} />
+                  <Route path="messages" element={<StaffMessages />} />
+                  <Route path="gallery" element={<StaffGallery />} />
+                  <Route path="profile" element={<StaffProfile />} />
+                  <Route path="settings" element={<StaffSettings />} />
                 </Route>
                 
                 {/* Catch-all route */}
