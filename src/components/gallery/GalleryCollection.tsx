@@ -21,7 +21,7 @@ const GalleryCollection: React.FC<GalleryCollectionProps> = ({ collections, onSe
             <h3 className="font-medium">{collection.title}</h3>
             <p className="text-sm text-muted-foreground">{collection.description}</p>
             <div className="text-xs text-muted-foreground mt-2">
-              {collection.photoCount} photos • {collection.date}
+              {collection.photos?.length || 0} photos • {collection.date}
             </div>
           </div>
         </Card>
