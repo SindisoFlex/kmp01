@@ -6,31 +6,31 @@ import { ChevronRight } from "lucide-react";
 
 const StaffPerformance: React.FC = () => {
   return (
-    <Card className="col-span-3">
+    <Card className="h-full flex flex-col">
       <CardHeader>
         <CardTitle>Staff Performance</CardTitle>
         <CardDescription>
           Completed bookings this month
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-grow overflow-hidden overflow-y-auto">
         <div className="space-y-4">
           {["Jane Smith", "Alex Brown", "Michael Lee", "Sarah Johnson"].map((name, i) => (
             <div key={name} className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
+              <div className="flex items-center space-x-2 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium flex-shrink-0">
                   {name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <div>
-                  <p className="text-sm font-medium">{name}</p>
-                  <p className="text-xs text-muted-foreground">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{name}</p>
+                  <p className="text-xs text-muted-foreground truncate">
                     {i === 0 ? "Senior Photographer" : 
                      i === 1 ? "Lighting Specialist" :
                      i === 2 ? "Junior Photographer" : "Assistant"}
                   </p>
                 </div>
               </div>
-              <div className="text-sm font-medium">
+              <div className="text-sm font-medium flex-shrink-0 ml-2">
                 {i === 0 ? "24" : 
                  i === 1 ? "18" :
                  i === 2 ? "15" : "12"} bookings

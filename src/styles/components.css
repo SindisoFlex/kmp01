@@ -4,6 +4,37 @@
   @apply relative overflow-hidden rounded-lg border bg-card p-6 shadow-sm transition-all duration-200 hover:shadow-md;
 }
 
+/* Card layout utilities */
+.card-grid {
+  @apply grid gap-4 sm:gap-6;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.card-flex {
+  @apply flex flex-col h-full;
+}
+
+.card-header {
+  @apply flex-shrink-0;
+}
+
+.card-content {
+  @apply flex-grow overflow-hidden;
+}
+
+.card-footer {
+  @apply flex-shrink-0;
+}
+
+/* Text utilities */
+.text-truncate {
+  @apply truncate;
+}
+
+.text-clamp-2 {
+  @apply line-clamp-2;
+}
+
 /* Images optimization */
 img {
   @apply max-w-full h-auto;
@@ -18,10 +49,46 @@ img {
   .mobile-only {
     display: block;
   }
+  
+  .mobile-stack {
+    @apply flex-col;
+  }
+  
+  .mobile-full-width {
+    @apply w-full;
+  }
+  
+  .mobile-center {
+    @apply text-center flex justify-center;
+  }
 }
 
 @media (min-width: 641px) {
   .mobile-only {
     display: none;
   }
+  
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Transition utilities */
+.transition-smooth {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Proper spacing for nested card content */
+.nested-card-content > * + * {
+  @apply mt-4;
+}
+
+/* Card shadows */
+.card-hover {
+  @apply transition-shadow duration-200 hover:shadow-md;
+}
+
+/* Fix overflow issues */
+.overflow-fix {
+  @apply overflow-hidden overflow-ellipsis;
 }

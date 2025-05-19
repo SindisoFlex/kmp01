@@ -23,8 +23,8 @@ const AdminDashboard = () => {
   const { user } = useAuth();
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
         <p className="text-sm text-muted-foreground">
           Welcome back, {user?.name?.split(' ')[0]}
@@ -35,13 +35,17 @@ const AdminDashboard = () => {
       <StatsSummary stats={mockStats} />
 
       {/* Activity and Performance */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <ActivityList />
-        <StaffPerformance />
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-4">
+          <ActivityList />
+        </div>
+        <div className="lg:col-span-3">
+          <StaffPerformance />
+        </div>
       </div>
 
       {/* Bottom Row */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <UpcomingSessions />
         <RecentMessages unreadCount={mockStats.messagesUnread} />
         <QuickActions />
