@@ -62,7 +62,7 @@ const AdminLayout: React.FC = () => {
       <div 
         className={`fixed inset-y-0 left-0 flex flex-col z-50 w-64 pt-5 pb-4 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out`}
+        } md:translate-x-0 transition duration-300 ease-in-out`}
       >
         {/* Mobile close button */}
         <div className="absolute right-0 mr-4 md:hidden">
@@ -98,7 +98,7 @@ const AdminLayout: React.FC = () => {
             <div className="ml-3">
               <p className="text-sm font-medium">{user?.name || 'Admin'}</p>
               <Badge variant="secondary" className="mt-1">
-                {user?.role.toUpperCase()}
+                {user?.role?.toUpperCase() || 'ADMIN'}
               </Badge>
             </div>
           </div>
@@ -151,12 +151,12 @@ const AdminLayout: React.FC = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex flex-col w-0 flex-1 overflow-hidden">
-        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
+      <div className="flex flex-col flex-1 md:pl-64">
+        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
           <Button
             variant="outline" 
             size="sm"
-            className="px-4 md:hidden"
+            className="px-4 md:hidden ml-1 mt-3"
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>

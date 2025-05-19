@@ -60,7 +60,7 @@ const StaffLayout: React.FC = () => {
       <div 
         className={`fixed inset-y-0 left-0 flex flex-col z-50 w-64 pt-5 pb-4 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out`}
+        } md:translate-x-0 transition duration-300 ease-in-out`}
       >
         {/* Mobile close button */}
         <div className="absolute right-0 mr-4 md:hidden">
@@ -96,7 +96,7 @@ const StaffLayout: React.FC = () => {
             <div className="ml-3">
               <p className="text-sm font-medium">{user?.name || 'Staff'}</p>
               <Badge variant="outline" className="mt-1">
-                {user?.role.toUpperCase()}
+                {user?.role?.toUpperCase() || 'STAFF'}
               </Badge>
             </div>
           </div>
