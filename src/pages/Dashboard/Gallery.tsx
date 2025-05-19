@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CalendarDateRangePicker } from "@/components/ui/calendar-date-range";
-import { CalendarIcon } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 const Gallery: React.FC = () => {
   const { user } = useAuth();
@@ -31,6 +31,11 @@ const Gallery: React.FC = () => {
 
   const handleExpirationDateChange = (date: Date | undefined) => {
     setExpirationDate(date);
+  };
+
+  const handleExtend = () => {
+    // This is a placeholder for the extend functionality
+    console.log("Extend gallery access");
   };
 
   return (
@@ -50,7 +55,7 @@ const Gallery: React.FC = () => {
                 Make your gallery visible to everyone.
               </p>
             </div>
-            <VisibilityToggle value={isPublic} onChange={handleVisibilityChange} />
+            <VisibilityToggle isPublic={isPublic} onChange={handleVisibilityChange} />
           </div>
 
           <div className="space-y-2">
@@ -64,10 +69,13 @@ const Gallery: React.FC = () => {
       </Card>
 
       {expirationDate && (
-        <ExpirationBanner expirationDate={expirationDate.toISOString()} />
+        <ExpirationBanner 
+          expirationDate={expirationDate.toISOString()} 
+          onExtend={handleExtend}
+        />
       )}
 
-      <GalleryCollection items={galleries} />
+      <GalleryCollection collections={galleries} />
     </div>
   );
 };
