@@ -25,8 +25,8 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6 w-full max-w-full overflow-hidden">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-safe">Admin Dashboard</h1>
+        <p className="text-sm text-muted-foreground text-safe">
           Welcome back, {user?.name?.split(' ')[0]}
         </p>
       </div>

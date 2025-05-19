@@ -14,12 +14,12 @@ const GalleryCollection: React.FC<GalleryCollectionProps> = ({ collections, onSe
       {collections.map((collection) => (
         <Card 
           key={collection.id} 
-          className="overflow-hidden cursor-pointer hover:shadow-md transition-all duration-200 flex flex-col"
+          className="card-dashboard cursor-pointer hover:shadow-md transition-all duration-200"
           onClick={() => onSelect && onSelect(collection.id)}
         >
-          <div className="p-4 flex flex-col flex-grow">
-            <h3 className="font-medium truncate">{collection.title}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">{collection.description}</p>
+          <div className="card-content-dashboard">
+            <h3 className="font-medium truncate mb-1">{collection.title}</h3>
+            <p className="text-sm text-muted-foreground line-clamp-2 overflow-fix">{collection.description}</p>
             <div className="text-xs text-muted-foreground mt-2">
               {/* Display item count and date safely with optional chaining */}
               {(collection.itemCount || 0)} photos • {collection.date}

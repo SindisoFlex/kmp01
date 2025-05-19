@@ -90,5 +90,55 @@ img {
 
 /* Fix overflow issues */
 .overflow-fix {
-  @apply overflow-hidden overflow-ellipsis;
+  @apply overflow-hidden overflow-ellipsis whitespace-normal break-words;
+}
+
+/* Card content safety - prevent overflow */
+.card-safe {
+  @apply overflow-hidden;
+}
+
+/* Responsive card grid */
+.responsive-grid {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+
+/* Card padding adjustments for different screen sizes */
+@media (max-width: 480px) {
+  .card-padding-responsive {
+    @apply p-3;
+  }
+  
+  .card-title-responsive {
+    @apply text-base;
+  }
+  
+  .card-content-responsive {
+    @apply py-2;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .card-padding-responsive {
+    @apply p-4;
+  }
+  
+  .card-content-responsive {
+    @apply py-3;
+  }
+}
+
+/* New card variants with improved responsiveness */
+.card-dashboard {
+  @apply rounded-lg border bg-card shadow-sm transition-all duration-200 overflow-hidden flex flex-col;
+}
+
+.card-content-dashboard {
+  @apply p-4 sm:p-6 flex-grow overflow-hidden;
+}
+
+/* Ensure text never overflows */
+.text-safe {
+  @apply break-words overflow-hidden;
 }
