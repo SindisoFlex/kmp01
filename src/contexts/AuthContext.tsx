@@ -150,7 +150,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Update membership tier
-  const updateMembershipTier = (tier: 'free' | 'basic' | 'premium' | 'vip') => {
+  const updateMembershipTier = (tier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip') => {
     if (user) {
       const updatedUser = { ...user, membershipTier: tier };
       localStorage.setItem('user', JSON.stringify(updatedUser));
