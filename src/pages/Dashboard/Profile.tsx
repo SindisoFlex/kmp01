@@ -54,7 +54,7 @@ const UserProfile: React.FC = () => {
     <div className="container max-w-3xl mx-auto py-6">
       <h1 className="text-2xl font-bold mb-6">My Profile</h1>
       
-      <Card>
+      <Card className="card-dashboard">
         <form onSubmit={handleSubmit}>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
@@ -139,7 +139,7 @@ const UserProfile: React.FC = () => {
         </form>
       </Card>
       
-      <Card className="mt-6">
+      <Card className="mt-6 card-dashboard">
         <CardHeader>
           <div className="flex items-center gap-2">
             <UserCheck className="h-5 w-5 text-primary" />

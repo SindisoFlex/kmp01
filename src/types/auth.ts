@@ -6,6 +6,9 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
+  whatsapp?: string;
+  bio?: string;
+  isBusinessAccount?: boolean;
   membershipTier: 'free' | 'basic' | 'premium' | 'vip';
   points: number;
   profilePic?: string;
