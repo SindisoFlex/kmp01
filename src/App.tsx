@@ -22,6 +22,9 @@ import DashboardIndex from "./pages/Dashboard/Index";
 import DashboardBookings from "./pages/Dashboard/Bookings";
 import DashboardGallery from "./pages/Dashboard/Gallery";
 import PointsDashboard from "./pages/Dashboard/Points";
+import UserProfile from "./pages/Dashboard/Profile";
+import UserSettings from "./pages/Dashboard/Settings";
+import ReferralPage from "./pages/Dashboard/Refer";
 import GallerySettings from "./pages/Dashboard/GallerySettings";
 import InvoicesDashboard from "./pages/Dashboard/Invoices";
 import InvoiceDetailPage from "./pages/Dashboard/InvoiceDetail";
@@ -89,6 +92,9 @@ const App = () => {
                   <Route path="gallery" element={<DashboardGallery />} />
                   <Route path="gallery/:galleryId" element={<DashboardGallery />} />
                   <Route path="points" element={<PointsDashboard />} />
+                  <Route path="profile" element={<UserProfile />} />
+                  <Route path="settings" element={<UserSettings />} />
+                  <Route path="refer" element={<ReferralPage />} />
                   <Route path="gallery-settings" element={<GallerySettings />} />
                   <Route path="invoices" element={<InvoicesDashboard />} />
                   <Route path="invoices/:invoiceId" element={<InvoiceDetailPage />} />

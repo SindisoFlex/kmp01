@@ -98,10 +98,48 @@ img {
   @apply overflow-hidden;
 }
 
+/* Text safety to prevent overflow */
+.text-safe {
+  @apply break-words overflow-hidden;
+}
+
 /* Responsive card grid */
 .responsive-grid {
   @apply grid gap-4;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+
+/* 8pt grid system utilities */
+.grid-8 {
+  @apply p-2; /* 8px padding */
+}
+
+.grid-16 {
+  @apply p-4; /* 16px padding */
+}
+
+.grid-24 {
+  @apply p-6; /* 24px padding */
+}
+
+.grid-32 {
+  @apply p-8; /* 32px padding */
+}
+
+.gap-8 {
+  @apply gap-2; /* 8px gap */
+}
+
+.gap-16 {
+  @apply gap-4; /* 16px gap */
+}
+
+.gap-24 {
+  @apply gap-6; /* 24px gap */
+}
+
+.gap-32 {
+  @apply gap-8; /* 32px gap */
 }
 
 /* Card padding adjustments for different screen sizes */
@@ -138,7 +176,23 @@ img {
   @apply p-4 sm:p-6 flex-grow overflow-hidden;
 }
 
-/* Ensure text never overflows */
-.text-safe {
-  @apply break-words overflow-hidden;
+/* Dashboard card specific styles */
+.dashboard-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+.dashboard-card {
+  @apply overflow-hidden border bg-card rounded-lg shadow-sm transition-all duration-200;
+}
+
+.dashboard-card-header {
+  @apply p-4 border-b flex items-center justify-between;
+}
+
+.dashboard-card-content {
+  @apply p-4 overflow-hidden;
+}
+
+.dashboard-card-footer {
+  @apply p-4 border-t bg-muted/20;
 }
