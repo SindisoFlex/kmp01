@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -49,7 +48,7 @@ const DashboardLayout: React.FC = () => {
   ];
 
   const quickActions = [
-    { name: "New Booking", href: "/services", icon: Calendar },
+    { name: "New Booking", href: "/dashboard/booking/new", icon: Calendar },
     { name: "Refer Friend", href: "/dashboard/refer", icon: QrCode },
     { name: "Download Photos", href: "/dashboard/download", icon: Download },
   ];

@@ -20,6 +20,7 @@ import AIChat from "./components/ai/AIChat";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import DashboardIndex from "./pages/Dashboard/Index";
 import DashboardBookings from "./pages/Dashboard/Bookings";
+import BookingWizardPage from "./pages/Dashboard/BookingWizard";
 import DashboardGallery from "./pages/Dashboard/Gallery";
 import PointsDashboard from "./pages/Dashboard/Points";
 import UserProfile from "./pages/Dashboard/Profile";
@@ -94,6 +95,7 @@ const App = () => {
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<DashboardIndex />} />
                   <Route path="bookings" element={<DashboardBookings />} />
+                  <Route path="booking/new" element={<BookingWizardPage />} />
                   <Route path="gallery" element={<DashboardGallery />} />
                   <Route path="gallery/:galleryId" element={<DashboardGallery />} />
                   <Route path="points" element={<PointsDashboard />} />
