@@ -9,7 +9,7 @@ export interface User {
   whatsapp?: string;
   bio?: string;
   isBusinessAccount?: boolean;
-  membershipTier: 'free' | 'basic' | 'premium' | 'vip';
+  membershipTier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip';
   points: number;
   profilePic?: string;
   role: UserRole;
@@ -28,6 +28,6 @@ export interface AuthContextType {
   guestAccess: (name: string, email: string) => Promise<void>;
   logout: () => void;
   hasRole: (roles: UserRole | UserRole[]) => boolean;
-  updateMembershipTier: (tier: 'free' | 'basic' | 'premium' | 'vip') => void;
+  updateMembershipTier: (tier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip') => void;
   addPoints: (points: number) => void;
 }

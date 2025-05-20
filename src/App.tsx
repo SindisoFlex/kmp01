@@ -35,6 +35,10 @@ import AdminLayout from "./components/admin/AdminLayout";
 import AdminLogin from "./pages/Admin/Login";
 import AdminDashboard from "./pages/Admin/Index";
 import AdminAnalytics from "./pages/Admin/Analytics";
+import AdminStaff from "./pages/Admin/Staff";
+import AdminClients from "./pages/Admin/Clients";
+import AdminGallery from "./pages/Admin/Gallery";
+import AdminMessages from "./pages/Admin/Messages";
 import RoleGuard from "./components/auth/RoleGuard";
 
 // Staff dashboard
@@ -109,6 +113,10 @@ const App = () => {
                 }>
                   <Route index element={<AdminDashboard />} />
                   <Route path="analytics" element={<AdminAnalytics />} />
+                  <Route path="staff" element={<AdminStaff />} />
+                  <Route path="clients" element={<AdminClients />} />
+                  <Route path="gallery" element={<AdminGallery />} />
+                  <Route path="messages" element={<AdminMessages />} />
                 </Route>
                 
                 {/* Staff Dashboard Routes - Protected */}
