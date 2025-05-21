@@ -151,7 +151,7 @@ const AdminDashboard = () => {
                     <p className="font-medium text-sm">{item.client}</p>
                     <p className="text-xs text-muted-foreground">{item.action}</p>
                   </div>
-                  <Badge variant={i === 2 ? "destructive" : "success"} className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{item.points}</Badge>
+                  <Badge variant={i === 2 ? "destructive" : "default"} className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{item.points}</Badge>
                 </div>
               ))}
             </div>
