@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
-const BookingConfirmation: React.FC = () => {
+interface BookingConfirmationProps {
+  bookingId?: string;
+}
+
+const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ bookingId }) => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardContent className="pt-6 pb-4 text-center">
@@ -13,6 +17,11 @@ const BookingConfirmation: React.FC = () => {
           <CheckCircle className="h-16 w-16 text-green-500" />
         </div>
         <h2 className="text-2xl font-bold mb-2">Booking Submitted!</h2>
+        {bookingId && (
+          <p className="text-primary font-medium mb-2">
+            Booking Reference: {bookingId}
+          </p>
+        )}
         <p className="text-muted-foreground mb-4">
           Your booking request has been successfully submitted. Our team will review it and get back to you shortly.
         </p>

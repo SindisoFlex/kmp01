@@ -36,6 +36,7 @@ const BookingWizard = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [bookingId, setBookingId] = useState("");
 
   // Handle moving to next step
   const handleNext = () => {
@@ -63,16 +64,29 @@ const BookingWizard = () => {
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would be an API call
+      // In a real app, this would be an API call to store the booking in a database
+      // and notify the admin/staff
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Generate a unique booking ID (in production this would come from the backend)
-      const bookingId = `BK-${Math.floor(100000 + Math.random() * 900000)}`;
+      const generatedBookingId = `BK-${Math.floor(100000 + Math.random() * 900000)}`;
+      setBookingId(generatedBookingId);
+      
+      // Log the booking to simulate database storage
+      console.log("Booking submitted:", {
+        id: generatedBookingId,
+        ...bookingData,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+      });
       
       toast({
         title: "Booking Submitted Successfully!",
-        description: `Your booking reference is: ${bookingId}`,
+        description: `Your booking reference is: ${generatedBookingId}`,
       });
+      
+      // Simulate notification to admin/staff
+      console.log("Sending notification to admin/staff about new booking:", generatedBookingId);
       
       // Mark booking as complete
       setIsComplete(true);
@@ -126,7 +140,7 @@ const BookingWizard = () => {
           bookingData={bookingData}
         />;
       default:
-        return <BookingConfirmation />;
+        return null;
     }
   };
 
@@ -146,7 +160,7 @@ const BookingWizard = () => {
 
   // If booking is complete, render confirmation
   if (isComplete) {
-    return <BookingConfirmation />;
+    return <BookingConfirmation bookingId={bookingId} />;
   }
 
   return (
