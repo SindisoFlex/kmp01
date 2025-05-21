@@ -35,8 +35,7 @@ export const pointsConfig: PointsConfig = {
         'All free benefits',
         '5% discount on photoshoots',
         'Access to basic filters',
-        '3-month gallery access',
-        '1 free print'
+        '3-month gallery access'
       ]
     },
     silver: {
@@ -48,9 +47,7 @@ export const pointsConfig: PointsConfig = {
         '10% discount on photoshoots',
         'Access to premium filters',
         'Priority booking',
-        '6-month gallery access',
-        'Extra downloads',
-        'Bonus points on referrals'
+        '6-month gallery access'
       ]
     },
     gold: {
@@ -63,9 +60,7 @@ export const pointsConfig: PointsConfig = {
         'Access to all filters',
         'Priority booking',
         'Free photo editing',
-        '12-month gallery access',
-        'Free add-ons',
-        'Personalized gallery themes'
+        '12-month gallery access'
       ]
     },
     vip: {
@@ -79,8 +74,7 @@ export const pointsConfig: PointsConfig = {
         'VIP priority booking',
         'Free photo editing',
         'Annual free photoshoot',
-        'Lifetime gallery access',
-        'Exclusive VIP events'
+        'Lifetime gallery access'
       ]
     }
   }
@@ -166,37 +160,5 @@ export function getGalleryAccessDuration(membershipTier: MembershipTier): number
       return 36500; // ~100 years (essentially lifetime)
     default:
       return 30; // 30 days for free tier
-  }
-}
-
-// Function to track points for different activities
-export function calculatePointsForActivity(activityType: string, value?: number): number {
-  switch (activityType) {
-    case 'booking':
-      // Points from booking are calculated from spend
-      return value ? calculatePointsFromSpend(value) : 0;
-      
-    case 'referral':
-      // Fixed points for successful referral
-      return 20;
-      
-    case 'review':
-      // Points for leaving a review
-      return 5;
-      
-    case 'testimonial':
-      // Points for submitting a testimonial
-      return 10;
-      
-    case 'share_gallery':
-      // Points for sharing gallery on social media
-      return 3;
-      
-    case 'complete_profile':
-      // Points for completing profile
-      return 2;
-      
-    default:
-      return 0;
   }
 }

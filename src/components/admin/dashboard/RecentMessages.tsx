@@ -10,7 +10,7 @@ interface RecentMessagesProps {
 
 const RecentMessages: React.FC<RecentMessagesProps> = ({ unreadCount }) => {
   return (
-    <Card className="h-full flex flex-col">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Recent Messages</CardTitle>
@@ -24,15 +24,15 @@ const RecentMessages: React.FC<RecentMessagesProps> = ({ unreadCount }) => {
           </span>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow overflow-hidden overflow-y-auto">
+      <CardContent>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-start space-x-2 border-b pb-4 last:border-0 last:pb-0">
-              <div className="min-w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium flex-shrink-0">
+              <div className="min-w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
                 {String.fromCharCode(64 + i)}
               </div>
-              <div className="min-w-0 flex-grow">
-                <p className="text-sm font-medium truncate">
+              <div>
+                <p className="text-sm font-medium">
                   {i === 1 ? "Alice Johnson" : 
                    i === 2 ? "Bob Smith" : "Carol Williams"}
                 </p>

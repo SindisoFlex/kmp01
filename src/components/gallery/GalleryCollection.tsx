@@ -10,19 +10,18 @@ export interface GalleryCollectionProps {
 
 const GalleryCollection: React.FC<GalleryCollectionProps> = ({ collections, onSelect }) => {
   return (
-    <div className="grid gap-16 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {collections.map((collection) => (
         <Card 
           key={collection.id} 
-          className="card-dashboard cursor-pointer hover:shadow-md transition-all duration-200 h-full"
+          className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
           onClick={() => onSelect && onSelect(collection.id)}
         >
-          <div className="card-content-dashboard flex flex-col h-full">
-            <h3 className="font-medium truncate mb-2">{collection.title}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2 overflow-fix flex-grow mb-2">{collection.description}</p>
-            <div className="text-xs text-muted-foreground mt-auto">
-              {/* Display item count and date safely with optional chaining */}
-              {(collection.itemCount || 0)} photos • {collection.date}
+          <div className="p-4">
+            <h3 className="font-medium">{collection.title}</h3>
+            <p className="text-sm text-muted-foreground">{collection.description}</p>
+            <div className="text-xs text-muted-foreground mt-2">
+              {collection.photoCount} photos • {collection.date}
             </div>
           </div>
         </Card>

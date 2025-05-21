@@ -7,28 +7,28 @@ import { Badge } from "@/components/ui/badge";
 
 const UpcomingSessions: React.FC = () => {
   return (
-    <Card className="h-full flex flex-col">
+    <Card>
       <CardHeader>
         <CardTitle>Upcoming Sessions</CardTitle>
         <CardDescription>
           Next 3 scheduled bookings
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow overflow-hidden overflow-y-auto">
+      <CardContent>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="border-b pb-4 last:border-0 last:pb-0">
-              <div className="flex justify-between mb-1 flex-wrap gap-2">
-                <p className="font-medium truncate">Wedding Shoot - Cooper Family</p>
+              <div className="flex justify-between mb-1">
+                <p className="font-medium">Wedding Shoot - Cooper Family</p>
                 <Badge variant="outline" className={
-                  i === 1 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 whitespace-nowrap" : "whitespace-nowrap"}
+                  i === 1 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300" : ""}
                 >
                   {i === 1 ? "Tomorrow" : `In ${i} days`}
                 </Badge>
               </div>
-              <div className="flex justify-between text-sm flex-wrap gap-2">
-                <p className="text-muted-foreground truncate">May {15 + i}, 2025 · 2:00 PM</p>
-                <p className="text-muted-foreground truncate">Sarah Johnson</p>
+              <div className="flex justify-between text-sm">
+                <p className="text-muted-foreground">May {15 + i}, 2025 · 2:00 PM</p>
+                <p className="text-muted-foreground">Sarah Johnson</p>
               </div>
             </div>
           ))}

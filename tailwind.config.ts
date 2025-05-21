@@ -65,14 +65,9 @@ export default {
 				},
 				// Add custom brand colors
 				brand: {
-					red: '#ff0000',  // Updated to pure red
-					black: '#000000', // Pure black
-					white: '#ffffff'  // Pure white
-				},
-				highlight: {
-					DEFAULT: '#ff0000', // Red highlight color
-					dark: '#ff3333',    // Lighter red for dark mode
-					light: '#cc0000'    // Darker red for light mode
+					red: '#ea384c',
+					black: '#000000',
+					white: '#ffffff'
 				}
 			},
 			borderRadius: {

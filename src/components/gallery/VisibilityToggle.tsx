@@ -2,46 +2,24 @@
 import React from 'react';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { MediaVisibility } from '@/utils/galleryUtils';
 
 export interface VisibilityToggleProps {
-  isPublic?: boolean;
-  onChange?: (isPublic: boolean) => void;
-  visibility?: MediaVisibility;
-  onToggle?: (newVisibility: 'public' | 'private') => void;
+  isPublic: boolean;
+  onChange: (isPublic: boolean) => void;
   // Allow additional props like visibility for MediaCard
   [key: string]: any;
 }
 
-const VisibilityToggle: React.FC<VisibilityToggleProps> = ({ 
-  isPublic, 
-  onChange, 
-  visibility, 
-  onToggle, 
-  ...props 
-}) => {
-  // Determine if the item is public based on either prop
-  const isItemPublic = isPublic !== undefined ? isPublic : visibility === 'public';
-  
-  // Handle change based on which props were provided
-  const handleChange = (value: boolean) => {
-    if (onChange) {
-      onChange(value);
-    }
-    if (onToggle) {
-      onToggle(value ? 'public' : 'private');
-    }
-  };
-
+const VisibilityToggle: React.FC<VisibilityToggleProps> = ({ isPublic, onChange, ...props }) => {
   return (
-    <div className="flex items-center space-x-2" {...props}>
+    <div className="flex items-center space-x-2">
       <Switch
         id="public-visibility"
-        checked={isItemPublic}
-        onCheckedChange={handleChange}
+        checked={isPublic}
+        onCheckedChange={onChange}
       />
       <Label htmlFor="public-visibility" className="text-sm">
-        {isItemPublic ? 'Public' : 'Private'}
+        {isPublic ? 'Public' : 'Private'}
       </Label>
     </div>
   );

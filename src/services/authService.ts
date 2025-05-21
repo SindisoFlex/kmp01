@@ -11,7 +11,7 @@ export const loginUser = async (email: string, password: string): Promise<User> 
       id: '1',
       name: 'Demo User',
       email: 'demo@example.com',
-      membershipTier: 'bronze', // Changed from 'basic'
+      membershipTier: 'basic',
       points: 150,
       profilePic: 'https://i.pravatar.cc/150?u=demo',
       role: 'client',
@@ -34,7 +34,7 @@ export const loginStaff = async (email: string, password: string): Promise<User>
       id: 'staff1',
       name: 'Staff Member',
       email: 'staff@example.com',
-      membershipTier: 'gold', // Changed from 'premium'
+      membershipTier: 'premium', // Not really applicable for staff
       points: 0, // Not applicable for staff
       profilePic: 'https://i.pravatar.cc/150?u=staff',
       role: 'staff'

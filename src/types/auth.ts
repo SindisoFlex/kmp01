@@ -6,10 +6,7 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  whatsapp?: string;
-  bio?: string;
-  isBusinessAccount?: boolean;
-  membershipTier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip';
+  membershipTier: 'free' | 'basic' | 'premium' | 'vip';
   points: number;
   profilePic?: string;
   role: UserRole;
@@ -28,6 +25,6 @@ export interface AuthContextType {
   guestAccess: (name: string, email: string) => Promise<void>;
   logout: () => void;
   hasRole: (roles: UserRole | UserRole[]) => boolean;
-  updateMembershipTier: (tier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip') => void;
+  updateMembershipTier: (tier: 'free' | 'basic' | 'premium' | 'vip') => void;
   addPoints: (points: number) => void;
 }

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -129,7 +130,7 @@ const DashboardBookings: React.FC = () => {
           <Button variant="outline" size="sm">Past</Button>
         </div>
         <Button asChild>
-          <Link to="/dashboard/booking/new">New Booking</Link>
+          <Link to="/services">New Booking</Link>
         </Button>
       </div>
 
@@ -239,7 +240,7 @@ const DashboardBookings: React.FC = () => {
                 You haven't scheduled any photography sessions yet
               </p>
               <Button asChild>
-                <Link to="/dashboard/booking/new">Book your first session</Link>
+                <Link to="/services">Book your first session</Link>
               </Button>
             </div>
           )}

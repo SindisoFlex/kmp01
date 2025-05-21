@@ -20,12 +20,8 @@ import AIChat from "./components/ai/AIChat";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import DashboardIndex from "./pages/Dashboard/Index";
 import DashboardBookings from "./pages/Dashboard/Bookings";
-import BookingWizardPage from "./pages/Dashboard/BookingWizard";
 import DashboardGallery from "./pages/Dashboard/Gallery";
 import PointsDashboard from "./pages/Dashboard/Points";
-import UserProfile from "./pages/Dashboard/Profile";
-import UserSettings from "./pages/Dashboard/Settings";
-import ReferralPage from "./pages/Dashboard/Refer";
 import GallerySettings from "./pages/Dashboard/GallerySettings";
 import InvoicesDashboard from "./pages/Dashboard/Invoices";
 import InvoiceDetailPage from "./pages/Dashboard/InvoiceDetail";
@@ -36,11 +32,6 @@ import AdminLayout from "./components/admin/AdminLayout";
 import AdminLogin from "./pages/Admin/Login";
 import AdminDashboard from "./pages/Admin/Index";
 import AdminAnalytics from "./pages/Admin/Analytics";
-import AdminStaff from "./pages/Admin/Staff";
-import AdminClients from "./pages/Admin/Clients";
-import AdminGallery from "./pages/Admin/Gallery";
-import AdminMessages from "./pages/Admin/Messages";
-import AdminBookings from "./pages/Admin/Bookings";
 import RoleGuard from "./components/auth/RoleGuard";
 
 // Staff dashboard
@@ -95,13 +86,9 @@ const App = () => {
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<DashboardIndex />} />
                   <Route path="bookings" element={<DashboardBookings />} />
-                  <Route path="booking/new" element={<BookingWizardPage />} />
                   <Route path="gallery" element={<DashboardGallery />} />
                   <Route path="gallery/:galleryId" element={<DashboardGallery />} />
                   <Route path="points" element={<PointsDashboard />} />
-                  <Route path="profile" element={<UserProfile />} />
-                  <Route path="settings" element={<UserSettings />} />
-                  <Route path="refer" element={<ReferralPage />} />
                   <Route path="gallery-settings" element={<GallerySettings />} />
                   <Route path="invoices" element={<InvoicesDashboard />} />
                   <Route path="invoices/:invoiceId" element={<InvoiceDetailPage />} />
@@ -116,14 +103,6 @@ const App = () => {
                 }>
                   <Route index element={<AdminDashboard />} />
                   <Route path="analytics" element={<AdminAnalytics />} />
-                  <Route path="bookings" element={<AdminBookings />} />
-                  <Route path="staff" element={<AdminStaff />} />
-                  <Route path="clients" element={<AdminClients />} />
-                  <Route path="gallery" element={<AdminGallery />} />
-                  <Route path="messages" element={<AdminMessages />} />
-                  <Route path="payments" element={<AdminPayments />} />
-                  <Route path="loyalty" element={<AdminLoyalty />} />
-                  <Route path="settings" element={<AdminSettings />} />
                 </Route>
                 
                 {/* Staff Dashboard Routes - Protected */}
