@@ -121,9 +121,6 @@ const App = () => {
                   <Route path="clients" element={<AdminClients />} />
                   <Route path="gallery" element={<AdminGallery />} />
                   <Route path="messages" element={<AdminMessages />} />
-                  <Route path="payments" element={<AdminPayments />} />
-                  <Route path="loyalty" element={<AdminLoyalty />} />
-                  <Route path="settings" element={<AdminSettings />} />
                 </Route>
                 
                 {/* Staff Dashboard Routes - Protected */}
