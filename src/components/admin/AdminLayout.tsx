@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   BarChart3,
   Calendar,
@@ -18,7 +19,9 @@ import {
   Image,
   Bell,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  CircleDollarSign,
+  Award
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +35,7 @@ const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     // Initialize from local storage if available
@@ -52,6 +56,8 @@ const AdminLayout: React.FC = () => {
     { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     { name: "Messages", href: "/admin/messages", icon: MessageSquare, badge: "3" },
     { name: "Gallery", href: "/admin/gallery", icon: Image },
+    { name: "Payments", href: "/admin/payments", icon: CircleDollarSign },
+    { name: "Loyalty Program", href: "/admin/loyalty", icon: Award },
     { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
@@ -67,6 +73,13 @@ const AdminLayout: React.FC = () => {
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
+  // Close sidebar when navigating on mobile
+  useEffect(() => {
+    if (isMobile && sidebarOpen) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
@@ -87,7 +100,7 @@ const AdminLayout: React.FC = () => {
                   ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         {/* Mobile close button */}
-        <div className="absolute right-0 mr-4 md:hidden">
+        <div className="absolute right-0 top-0 mr-4 mt-4 md:hidden">
           <Button 
             variant="ghost" 
             size="sm" 

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BarChart3, Users, Calendar, User } from "lucide-react";
+import { BarChart3, Users, Calendar, User, CircleDollarSign, MessageSquare, BookOpen } from "lucide-react";
 import StatsCard from "./StatsCard";
 
 interface StatsSummaryProps {
@@ -11,6 +11,8 @@ interface StatsSummaryProps {
     completedBookings: number;
     totalRevenue: string;
     newClientsThisMonth: number;
+    messagesUnread?: number;
+    pendingApprovals?: number;
   };
 }
 
@@ -22,6 +24,7 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({ stats }) => {
         value={stats.totalClients}
         description={`+${stats.newClientsThisMonth} this month`}
         icon={User}
+        trend={Math.floor(Math.random() * 10) + 1} // Mock positive trend
       />
       
       <StatsCard
@@ -36,13 +39,15 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({ stats }) => {
         value={stats.activeBookings}
         description={`${stats.completedBookings} completed all-time`}
         icon={Calendar}
+        trend={Math.floor(Math.random() * 10) + 1} // Mock positive trend
       />
       
       <StatsCard
         title="Total Revenue"
         value={stats.totalRevenue}
         description="Year to date"
-        icon={BarChart3}
+        icon={CircleDollarSign}
+        trend={Math.floor(Math.random() * 20) + 5} // Mock positive trend
       />
     </div>
   );
