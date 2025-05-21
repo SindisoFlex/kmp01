@@ -142,6 +142,9 @@ const UserMenu: React.FC = () => {
           <Link to="/dashboard" className="cursor-pointer">Dashboard</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
+          <Link to="/dashboard/booking/new" className="cursor-pointer">New Booking</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link to="/dashboard/bookings" className="cursor-pointer">My Bookings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
