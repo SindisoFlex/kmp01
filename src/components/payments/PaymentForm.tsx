@@ -22,10 +22,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
   const [notes, setNotes] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const { user } = useAuth();
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast({
         title: "Authentication Error",
@@ -34,12 +34,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
       });
       return;
     }
-    
+
     setIsProcessing(true);
-    
+
     // For online payments, in a real app we'd redirect to a payment gateway
     // For EFT and cash, we just process the payment directly with a reference
-    
+
     try {
       const payment = processPayment(invoiceId, paymentMethod, reference || undefined);
       if (payment) {
@@ -68,8 +68,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6">
-          <RadioGroup 
-            value={paymentMethod} 
+          <RadioGroup
+            value={paymentMethod}
             onValueChange={(value) => setPaymentMethod(value as PaymentMethod)}
           >
             <div className="flex items-center space-x-2 border rounded-md p-3 cursor-pointer hover:bg-gray-50">
@@ -94,7 +94,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
               </Label>
             </div>
           </RadioGroup>
-          
+
           {paymentMethod === "online" && (
             <div className="border rounded-md p-4 bg-gray-50">
               <p className="text-sm">
@@ -102,7 +102,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
               </p>
             </div>
           )}
-          
+
           {paymentMethod === "eft" && (
             <div className="border rounded-md p-4 bg-gray-50">
               <div className="space-y-4">
@@ -111,7 +111,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
                   <p className="text-sm text-gray-600">Please make your payment to:</p>
                   <div className="mt-2 text-sm">
                     <p>Bank: FNB</p>
-                    <p>Account Name: Studio Photography</p>
+                    <p>Account Name: Kasilam Media production</p>
                     <p>Account Number: 1234 5678 9012</p>
                     <p>Branch Code: 250655</p>
                     <p>Reference: INV-{invoiceId}</p>
@@ -119,8 +119,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="reference">Your Payment Reference</Label>
-                  <Input 
-                    id="reference" 
+                  <Input
+                    id="reference"
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
                     placeholder="e.g. John Smith INV-001"
@@ -130,17 +130,17 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
               </div>
             </div>
           )}
-          
+
           {paymentMethod === "cash" && (
             <div className="border rounded-md p-4 bg-gray-50">
               <p className="text-sm">
                 Please bring the exact amount in cash to our studio during business hours.
-                Our address is: 123 Photography Lane, Studio City, 2000
+                Our address is: 123 Photography Lane, Kasilam Media production City, 2000
               </p>
               <div className="space-y-2 mt-4">
                 <Label htmlFor="cash-notes">Notes (Optional)</Label>
-                <Textarea 
-                  id="cash-notes" 
+                <Textarea
+                  id="cash-notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Any special instructions..."
@@ -148,7 +148,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
               </div>
             </div>
           )}
-          
+
           <div className="border-t pt-4">
             <div className="flex justify-between items-center">
               <span className="font-semibold">Total Amount:</span>

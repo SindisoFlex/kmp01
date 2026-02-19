@@ -24,11 +24,11 @@ const ReferralSystem: React.FC = () => {
   const [inviteSent, setInviteSent] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  
+
   // Generate a unique referral code for the current user
-  const referralCode = user ? `${user.name.split(' ')[0]}${user.id.substring(0, 6)}`.toUpperCase() : "STUDIOX";
+  const referralCode = user ? `${user.name.split(' ')[0]}${user.id.substring(0, 6)}`.toUpperCase() : "KMPROD";
   const referralUrl = `${window.location.origin}/register?referral=${referralCode}`;
-  
+
   const handleCopy = () => {
     navigator.clipboard.writeText(referralUrl);
     setCopied(true);
@@ -36,10 +36,10 @@ const ReferralSystem: React.FC = () => {
       title: "Copied!",
       description: "Referral link copied to clipboard",
     });
-    
+
     setTimeout(() => setCopied(false), 2000);
   };
-  
+
   const handleEmailInvite = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, this would send the email through a backend service
@@ -51,13 +51,13 @@ const ReferralSystem: React.FC = () => {
     setTimeout(() => setInviteSent(false), 2000);
     setEmail("");
   };
-  
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Join StudioX Photography',
-          text: `Check out StudioX Photography! Use my referral code ${referralCode} for special benefits.`,
+          title: 'Join Kasilam Media production Photography',
+          text: `Check out Kasilam Media production Photography! Use my referral code ${referralCode} for special benefits.`,
           url: referralUrl,
         });
       } catch (err) {
@@ -73,7 +73,7 @@ const ReferralSystem: React.FC = () => {
       <CardHeader>
         <CardTitle>Refer Friends & Earn Points</CardTitle>
         <CardDescription>
-          Invite your friends and family to StudioX Photography and earn 10 points for each successful referral.
+          Invite your friends and family to Kasilam Media production Photography and earn 10 points for each successful referral.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -83,13 +83,13 @@ const ReferralSystem: React.FC = () => {
             <TabsTrigger value="email">Email Invite</TabsTrigger>
             <TabsTrigger value="qr">QR Code</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="link" className="space-y-4">
             <div className="mt-4">
               <div className="flex items-center space-x-2">
-                <Input 
-                  readOnly 
-                  value={referralUrl} 
+                <Input
+                  readOnly
+                  value={referralUrl}
                   className="bg-muted/50"
                 />
                 <Button
@@ -101,10 +101,10 @@ const ReferralSystem: React.FC = () => {
                   {copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
                 </Button>
               </div>
-              
+
               <div className="mt-4">
-                <Button 
-                  onClick={handleShare} 
+                <Button
+                  onClick={handleShare}
                   className="w-full"
                   variant="default"
                 >
@@ -114,7 +114,7 @@ const ReferralSystem: React.FC = () => {
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="email">
             <form onSubmit={handleEmailInvite} className="space-y-4 mt-4">
               <div className="space-y-2">
@@ -130,7 +130,7 @@ const ReferralSystem: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-                  <Button 
+                  <Button
                     type="submit"
                     variant="default"
                     className="flex-shrink-0"
@@ -140,13 +140,13 @@ const ReferralSystem: React.FC = () => {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="text-sm text-muted-foreground">
                 <p>Your friend will receive an email with your referral link.</p>
               </div>
             </form>
           </TabsContent>
-          
+
           <TabsContent value="qr">
             <div className="flex flex-col items-center justify-center p-4">
               <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -154,12 +154,12 @@ const ReferralSystem: React.FC = () => {
                 <QrCode className="h-48 w-48 text-primary" />
               </div>
               <p className="mt-4 text-sm text-muted-foreground text-center">
-                Scan this QR code to visit StudioX with your referral code: <span className="font-bold">{referralCode}</span>
+                Scan this QR code to visit Kasilam Media production with your referral code: <span className="font-bold">{referralCode}</span>
               </p>
             </div>
           </TabsContent>
         </Tabs>
-        
+
         <div className="mt-6 bg-muted/50 p-4 rounded-lg">
           <h4 className="font-medium text-sm mb-2">How referrals work</h4>
           <ol className="text-sm space-y-1 text-muted-foreground list-decimal list-inside">

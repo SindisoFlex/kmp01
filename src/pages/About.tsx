@@ -10,7 +10,7 @@ const About: React.FC = () => {
     <PageLayout>
       {/* Hero Section */}
       <Hero
-        title="About StudioX"
+        title="About Kasilam Media production"
         description="We're a team of designers, developers, and strategists passionate about creating exceptional digital experiences."
         bgClass="bg-secondary/50 dark:bg-secondary/10"
       />
@@ -22,12 +22,12 @@ const About: React.FC = () => {
             <div>
               <h2 className="mb-6">Our Story</h2>
               <p className="text-lg text-muted-foreground mb-4">
-                Founded in 2015, StudioX began with a simple mission: to create digital experiences that people love. 
-                What started as a small team of passionate designers and developers has grown into a full-service creative studio.
+                Founded in 2015, Kasilam Media production began with a simple mission: to create digital experiences that people love.
+                What started as a small team of passionate designers and developers has grown into a full-service creative agency.
               </p>
               <p className="text-lg text-muted-foreground">
-                Over the years, we've had the privilege of working with clients across various industries, 
-                from startups to Fortune 500 companies. Through every project, our focus remains the same — 
+                Over the years, we've had the privilege of working with clients across various industries,
+                from startups to Fortune 500 companies. Through every project, our focus remains the same —
                 delivering exceptional work that exceeds expectations and drives results.
               </p>
             </div>

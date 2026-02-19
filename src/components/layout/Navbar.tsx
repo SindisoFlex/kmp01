@@ -7,7 +7,7 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 import UserMenu from "@/components/auth/UserMenu";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -59,18 +59,17 @@ const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
           ? "bg-background/80 backdrop-blur-md shadow-sm"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <div className="page-container">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center" onClick={() => playSound("click")}>
             <span className="text-xl font-bold tracking-tight">
-              Studio<span className="text-primary">X</span>
+              Kasilam Media production
             </span>
           </Link>
 
@@ -91,7 +90,7 @@ const Navbar: React.FC = () => {
           {/* User Menu, Admin/Staff Login, Theme Toggle & Mobile Menu Button */}
           <div className="flex items-center space-x-2">
             <UserMenu />
-            
+
             {/* Admin/Staff Login Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -110,7 +109,7 @@ const Navbar: React.FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <ThemeToggle />
             <Button
               variant="ghost"
@@ -130,12 +129,12 @@ const Navbar: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-background animate-fade-in">
           <div className="page-container py-4">
             <div className="flex justify-between items-center">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="text-xl font-bold"
                 onClick={handleNavClick}
               >
-                Studio<span className="text-primary">X</span>
+                Kasilam Media production
               </Link>
               <Button
                 variant="ghost"

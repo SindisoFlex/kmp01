@@ -11,7 +11,7 @@ interface AuthDialogProps {
   defaultTab?: 'login' | 'register';
 }
 
-const AuthDialog: React.FC<AuthDialogProps> = ({ 
+const AuthDialog: React.FC<AuthDialogProps> = ({
   triggerElement,
   defaultTab = 'login'
 }) => {
@@ -22,7 +22,7 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
   if (isAuthenticated) {
     return null;
   }
-  
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -30,22 +30,22 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl">Welcome to StudioX</DialogTitle>
+          <DialogTitle className="text-center text-2xl">Welcome to Kasilam Media production</DialogTitle>
           <DialogDescription className="text-center">
             Sign in to access your account or create a new one
           </DialogDescription>
         </DialogHeader>
-        
+
         <Tabs defaultValue={defaultTab} className="mt-6">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="login">Log In</TabsTrigger>
             <TabsTrigger value="register">Sign Up</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="login">
             <LoginForm />
           </TabsContent>
-          
+
           <TabsContent value="register">
             <RegisterForm />
           </TabsContent>

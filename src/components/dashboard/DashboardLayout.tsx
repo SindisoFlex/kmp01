@@ -62,14 +62,14 @@ const DashboardLayout: React.FC = () => {
       <div className="flex h-screen overflow-hidden bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm">
         {/* Mobile sidebar backdrop */}
         {sidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         {/* Sidebar */}
-        <aside 
+        <aside
           className={`fixed md:static inset-y-0 left-0 flex flex-col z-50 
                     bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
                     transition-all duration-300 ease-in-out
@@ -78,9 +78,9 @@ const DashboardLayout: React.FC = () => {
         >
           {/* Mobile close button */}
           <div className="absolute right-0 mr-4 md:hidden">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-5 w-5" />
@@ -92,18 +92,18 @@ const DashboardLayout: React.FC = () => {
             {!collapsed && (
               <Link to="/" className="flex items-center">
                 <span className="text-xl font-bold tracking-tight">
-                  Studio<span className="text-primary">X</span>
+                  Kasilam Media production
                 </span>
               </Link>
             )}
             {collapsed && (
               <Link to="/" className="flex items-center justify-center">
-                <span className="text-xl font-bold text-primary">S</span>
+                <span className="text-xl font-bold text-primary">KMP</span>
               </Link>
             )}
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="hidden md:flex"
               onClick={toggleCollapsed}
             >
@@ -137,25 +137,22 @@ const DashboardLayout: React.FC = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`group flex items-center ${collapsed ? 'justify-center' : ''} px-2 py-2 text-sm font-medium rounded-md ${
-                      isActive
+                    className={`group flex items-center ${collapsed ? 'justify-center' : ''} px-2 py-2 text-sm font-medium rounded-md ${isActive
                         ? "bg-primary text-white"
                         : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    }`}
+                      }`}
                     onClick={() => setSidebarOpen(false)}
                   >
                     <item.icon
-                      className={`${collapsed ? 'mr-0' : 'mr-3'} h-5 w-5 ${
-                        isActive ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-500"
-                      }`}
+                      className={`${collapsed ? 'mr-0' : 'mr-3'} h-5 w-5 ${isActive ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-500"
+                        }`}
                     />
                     {!collapsed && (
                       <span className="flex-1">{item.name}</span>
                     )}
                     {!collapsed && item.badge && (
-                      <span className={`inline-block py-0.5 px-2 text-xs rounded-full ${
-                        isActive ? "bg-white/20 text-white" : "bg-primary/20 text-primary"
-                      }`}>
+                      <span className={`inline-block py-0.5 px-2 text-xs rounded-full ${isActive ? "bg-white/20 text-white" : "bg-primary/20 text-primary"
+                        }`}>
                         {item.badge}
                       </span>
                     )}
@@ -197,7 +194,7 @@ const DashboardLayout: React.FC = () => {
         <div className="flex flex-col flex-1 overflow-hidden">
           <header className="md:hidden sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow items-center">
             <Button
-              variant="outline" 
+              variant="outline"
               size="sm"
               className="ml-4"
               onClick={() => setSidebarOpen(true)}
@@ -205,7 +202,7 @@ const DashboardLayout: React.FC = () => {
               <Menu className="h-5 w-5" />
             </Button>
           </header>
-          
+
           <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
             <div className="py-6 px-4 sm:px-6 md:px-8">
               <Outlet />

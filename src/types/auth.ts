@@ -21,7 +21,7 @@ export interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, allowMarketing?: boolean) => Promise<void>;
+  register: (name: string, email: string, password: string, allowMarketing?: boolean) => Promise<{ needsConfirmation: boolean } | void>;
   socialLogin: (provider: 'google' | 'facebook' | 'whatsapp') => Promise<void>;
   staffLogin: (email: string, password: string) => Promise<void>;
   adminLogin: (email: string, password: string) => Promise<void>;

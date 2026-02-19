@@ -40,7 +40,7 @@ const Contact: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       toast.success("Your message has been sent! We'll get back to you soon.");
@@ -74,7 +74,7 @@ const Contact: React.FC = () => {
               <p className="text-lg text-muted-foreground mb-8">
                 We'd love to hear from you. Fill out the form and our team will get back to you as soon as possible.
               </p>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="bg-primary/10 p-3 rounded-full">
@@ -85,17 +85,17 @@ const Contact: React.FC = () => {
                     <p className="text-muted-foreground mt-1">+1 (123) 456-7890</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="bg-primary/10 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">Email</h3>
-                    <p className="text-muted-foreground mt-1">hello@studiox.com</p>
+                    <p className="text-muted-foreground mt-1">hello@kasilammedia.com</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="bg-primary/10 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
@@ -105,7 +105,7 @@ const Contact: React.FC = () => {
                     <p className="text-muted-foreground mt-1">123 Design Street, Creative City, 90210</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="bg-primary/10 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
@@ -118,7 +118,7 @@ const Contact: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-2xl font-semibold mb-6">Send Us a Message</h3>
@@ -148,7 +148,7 @@ const Contact: React.FC = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone (optional)</Label>
@@ -176,7 +176,7 @@ const Contact: React.FC = () => {
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="subject">Subject</Label>
                     <Input
@@ -188,7 +188,7 @@ const Contact: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="message">Message</Label>
                     <Textarea
@@ -201,7 +201,7 @@ const Contact: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
@@ -211,18 +211,18 @@ const Contact: React.FC = () => {
           </div>
         </div>
       </section>
-      
+
       {/* Map Section */}
       <section className="h-80 bg-muted mt-12">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3310.2785753245613!2d-118.24916978503709!3d34.05222262571042!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c6487ff0a1bf%3A0x3a60155926fd4e9f!2sDowntown%20Los%20Angeles%2C%20Los%20Angeles%2C%20CA!5e0!3m2!1sen!2sus!4v1622609551377!5m2!1sen!2sus" 
-          width="100%" 
-          height="100%" 
-          style={{ border: 0 }} 
-          allowFullScreen={false} 
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3310.2785753245613!2d-118.24916978503709!3d34.05222262571042!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c6487ff0a1bf%3A0x3a60155926fd4e9f!2sDowntown%20Los%20Angeles%2C%20Los%20Angeles%2C%20CA!5e0!3m2!1sen!2sus!4v1622609551377!5m2!1sen!2sus"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen={false}
           loading="lazy"
-          aria-label="Studio X Office Location"
-          title="Studio X Office Location"
+          aria-label="Kasilam Media production Office Location"
+          title="Kasilam Media production Office Location"
         ></iframe>
       </section>
     </PageLayout>

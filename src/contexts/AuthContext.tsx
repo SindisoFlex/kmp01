@@ -1,13 +1,16 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserRole, AuthContextType } from '../types/auth';
+import { supabase } from '../lib/supabase';
 import {
   loginUser,
   loginStaff,
-  loginAdmin,
+  loginAdmin as loginAdminService,
   registerUser,
   socialLoginUser,
-  createGuestAccess
+  createGuestAccess,
+  getUserProfile,
+  logoutUser
 } from '../services/authService';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,107 +24,87 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Check for existing session on mount
+  // Sync auth state with Supabase
   useEffect(() => {
-    const checkAuth = () => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-        setIsAuthenticated(true);
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const profile = await getUserProfile(session.user.id);
+          setUser(profile);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Initial session check error:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    checkAuth();
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setLoading(true);
+      if (session?.user) {
+        try {
+          const profile = await getUserProfile(session.user.id);
+          setUser(profile);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('State change profile fetch error:', error);
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Regular client login
   const login = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const mockUser = await loginUser(email, password);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    await loginUser(email, password);
+    // State will be updated by onAuthStateChange
   };
 
   // Staff login
   const staffLogin = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const mockUser = await loginStaff(email, password);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Staff login error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    await loginStaff(email, password);
+    // State will be updated by onAuthStateChange
   };
 
   // Admin login
   const adminLogin = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const mockUser = await loginAdmin(email, password);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Admin login error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    await loginAdminService(email, password);
+    // State will be updated by onAuthStateChange
   };
 
   // User registration
   const register = async (name: string, email: string, password: string, allowMarketing = false) => {
-    setLoading(true);
-    try {
-      const mockUser = await registerUser(name, email, password, allowMarketing);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
+    const result = await registerUser(name, email, password, allowMarketing);
+    if (result && 'needsConfirmation' in result) {
+      return { needsConfirmation: true };
     }
   };
 
   // Social login
   const socialLogin = async (provider: 'google' | 'facebook' | 'whatsapp') => {
-    setLoading(true);
-    try {
-      const mockUser = await socialLoginUser(provider);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error(`${provider} login error:`, error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    await socialLoginUser(provider);
+    // Redirects automatically
   };
 
-  // Guest access
+  // Guest access (stays local/mock for now)
   const guestAccess = async (name: string, email: string) => {
     setLoading(true);
     try {
-      const mockUser = await createGuestAccess(name, email);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
+      const guestUser = await createGuestAccess(name, email);
+      setUser(guestUser);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Guest access error:', error);
@@ -132,38 +115,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Logout
-  const logout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    setIsAuthenticated(false);
+  const logout = async () => {
+    setLoading(true);
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Helper function to check if user has specific role(s)
   const hasRole = (roles: UserRole | UserRole[]): boolean => {
     if (!user) return false;
-    
+
     if (Array.isArray(roles)) {
       return roles.includes(user.role);
     }
-    
+
     return user.role === roles;
   };
 
-  // Update membership tier
+  // Update membership tier (local optimization, should ideally update DB)
   const updateMembershipTier = (tier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip') => {
     if (user) {
-      const updatedUser = { ...user, membershipTier: tier };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setUser(updatedUser);
+      setUser({ ...user, membershipTier: tier });
+      // In production, sync this to Supabase 'profiles' table
     }
   };
 
-  // Add loyalty points
+  // Add loyalty points (local optimization, should ideally update DB)
   const addPoints = (points: number) => {
     if (user) {
-      const updatedUser = { ...user, points: user.points + points };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setUser(updatedUser);
+      setUser({ ...user, points: user.points + points });
+      // In production, sync this to Supabase 'profiles' table
     }
   };
 

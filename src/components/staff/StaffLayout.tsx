@@ -68,14 +68,14 @@ const StaffLayout: React.FC = () => {
     <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside 
+      <aside
         className={`fixed md:static inset-y-0 left-0 flex flex-col z-50 
                   bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
                   transition-all duration-300 ease-in-out
@@ -84,9 +84,9 @@ const StaffLayout: React.FC = () => {
       >
         {/* Mobile close button */}
         <div className="absolute right-0 mr-4 md:hidden">
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="h-5 w-5" />
@@ -98,18 +98,18 @@ const StaffLayout: React.FC = () => {
           {!collapsed && (
             <Link to="/staff" className="flex items-center">
               <span className="text-xl font-bold tracking-tight">
-                Studio<span className="text-primary">X</span> <span className="text-sm font-normal text-primary ml-1">Staff</span>
+                Kasilam Media production <span className="text-sm font-normal text-primary ml-1">Staff</span>
               </span>
             </Link>
           )}
           {collapsed && (
             <Link to="/staff" className="flex items-center justify-center">
-              <span className="text-xl font-bold text-primary">S</span>
+              <span className="text-xl font-bold text-primary">KMP</span>
             </Link>
           )}
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="hidden md:flex"
             onClick={toggleCollapsed}
           >
@@ -148,25 +148,22 @@ const StaffLayout: React.FC = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`group flex items-center ${collapsed ? 'justify-center' : ''} px-2 py-2 text-sm font-medium rounded-md ${
-                    isActive
+                  className={`group flex items-center ${collapsed ? 'justify-center' : ''} px-2 py-2 text-sm font-medium rounded-md ${isActive
                       ? "bg-primary text-white"
                       : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
+                    }`}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <item.icon
-                    className={`${collapsed ? 'mr-0' : 'mr-3'} h-5 w-5 ${
-                      isActive ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-500"
-                    }`}
+                    className={`${collapsed ? 'mr-0' : 'mr-3'} h-5 w-5 ${isActive ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-500"
+                      }`}
                   />
                   {!collapsed && (
                     <span className="flex-1">{item.name}</span>
                   )}
                   {!collapsed && item.badge && (
-                    <span className={`inline-block py-0.5 px-2 text-xs rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-primary/20 text-primary"
-                    }`}>
+                    <span className={`inline-block py-0.5 px-2 text-xs rounded-full ${isActive ? "bg-white/20 text-white" : "bg-primary/20 text-primary"
+                      }`}>
                       {item.badge}
                     </span>
                   )}
@@ -191,14 +188,14 @@ const StaffLayout: React.FC = () => {
       <div className="flex flex-col flex-1 overflow-hidden">
         <header className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow items-center">
           <Button
-            variant="outline" 
+            variant="outline"
             size="sm"
             className="ml-4 md:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-5 w-5" />
           </Button>
-          
+
           <div className="flex-1 flex justify-end px-4">
             <div className="ml-4 flex items-center md:ml-6">
               <Button variant="ghost" size="sm" className="rounded-full relative">
@@ -208,7 +205,7 @@ const StaffLayout: React.FC = () => {
             </div>
           </div>
         </header>
-        
+
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">

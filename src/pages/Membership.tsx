@@ -12,7 +12,7 @@ import { Shield, Award, Star } from 'lucide-react';
 const MembershipPage: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const [activeTab, setActiveTab] = useState("benefits");
-  
+
   if (!isAuthenticated) {
     return (
       <PageLayout>
@@ -35,7 +35,7 @@ const MembershipPage: React.FC = () => {
       </PageLayout>
     );
   }
-  
+
   if (!user) {
     return (
       <PageLayout>
@@ -49,10 +49,10 @@ const MembershipPage: React.FC = () => {
       </PageLayout>
     );
   }
-  
+
   const currentTier = determineTier(user.points);
   const { nextTier, pointsNeeded } = pointsToNextTier(user.points);
-  
+
   return (
     <PageLayout>
       <div className="container max-w-5xl mx-auto py-12">
@@ -62,7 +62,7 @@ const MembershipPage: React.FC = () => {
               {currentTier === 'free' ? 'Unlock More Benefits' : 'Your Membership'}
             </CardTitle>
             <CardDescription>
-              Explore the benefits of being a StudioX member and track your progress.
+              Explore the benefits of being a Kasilam Media production member and track your progress.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -81,7 +81,7 @@ const MembershipPage: React.FC = () => {
                   Perks
                 </TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="benefits" className="space-y-4 py-4">
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold">Membership Tiers</h3>
@@ -89,7 +89,7 @@ const MembershipPage: React.FC = () => {
                     As you earn more points, you'll unlock higher membership tiers with exclusive benefits.
                   </p>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Card className="bg-muted/50">
                     <CardHeader>
@@ -101,7 +101,7 @@ const MembershipPage: React.FC = () => {
                       <p>Access to public portfolio</p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-amber-100/50">
                     <CardHeader>
                       <CardTitle>Bronze</CardTitle>
@@ -112,7 +112,7 @@ const MembershipPage: React.FC = () => {
                       <p>Access to basic editing tools</p>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-gray-100/50">
                     <CardHeader>
                       <CardTitle>Silver</CardTitle>
@@ -125,7 +125,7 @@ const MembershipPage: React.FC = () => {
                   </Card>
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="progress" className="space-y-4 py-4">
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold">Your Progress</h3>
@@ -133,7 +133,7 @@ const MembershipPage: React.FC = () => {
                     Track your progress towards the next membership tier.
                   </p>
                 </div>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Current Tier: {currentTier}</CardTitle>
@@ -157,15 +157,15 @@ const MembershipPage: React.FC = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
-              
+
               <TabsContent value="perks" className="space-y-4 py-4">
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold">Exclusive Perks</h3>
                   <p className="text-muted-foreground">
-                    Enjoy these perks as a StudioX member.
+                    Enjoy these perks as a Kasilam Media production member.
                   </p>
                 </div>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Discounts</CardTitle>

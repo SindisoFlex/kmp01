@@ -57,12 +57,12 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
       setMessages([
         {
           id: "welcome",
-          content: "Hello! I'm StudioX's AI assistant. How can I help you today?",
+          content: "Hello! I'm Kasilam Media production's AI assistant. How can I help you today?",
           sender: "bot",
           timestamp: new Date()
         }
       ]);
-      
+
       // Set a random smart prompt
       const randomPrompt = smartPrompts[Math.floor(Math.random() * smartPrompts.length)];
       setCurrentPrompt(randomPrompt);
@@ -77,25 +77,25 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
   // Process user message and generate response
   const processMessage = (userMessage: string) => {
     setIsTyping(true);
-    
+
     // Create a small delay to simulate processing
     setTimeout(() => {
       let botResponse = "I'm not sure about that. Would you like me to connect you with a human assistant?";
-      
+
       // Check for keyword matches in FAQs
       const lowercaseMsg = userMessage.toLowerCase();
-      const matchedKey = Object.keys(faqResponses).find(key => 
+      const matchedKey = Object.keys(faqResponses).find(key =>
         lowercaseMsg.includes(key)
       );
-      
+
       if (matchedKey) {
         botResponse = faqResponses[matchedKey];
       } else if (
-        lowercaseMsg.includes("hello") || 
-        lowercaseMsg.includes("hi") || 
+        lowercaseMsg.includes("hello") ||
+        lowercaseMsg.includes("hi") ||
         lowercaseMsg.includes("hey")
       ) {
-        botResponse = "Hello there! How can I help you with StudioX services today?";
+        botResponse = "Hello there! How can I help you with Kasilam Media production services today?";
       } else if (lowercaseMsg.includes("thanks") || lowercaseMsg.includes("thank you")) {
         botResponse = "You're welcome! Is there anything else I can help you with?";
       } else if (lowercaseMsg.includes("human") || lowercaseMsg.includes("person") || lowercaseMsg.includes("agent")) {
@@ -110,9 +110,9 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
       } else if (lowercaseMsg.includes("membership") || lowercaseMsg.includes("tier") || lowercaseMsg.includes("benefits")) {
         botResponse = "Our membership program offers great benefits like discounts and extended gallery access. You can check all the details on our Membership page.";
       }
-      
+
       setMessages(prev => [
-        ...prev, 
+        ...prev,
         {
           id: Date.now().toString(),
           content: botResponse,
@@ -120,9 +120,9 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
           timestamp: new Date()
         }
       ]);
-      
+
       setIsTyping(false);
-      
+
       // Set a new smart prompt
       const newPrompt = smartPrompts[Math.floor(Math.random() * smartPrompts.length)];
       setCurrentPrompt(newPrompt);
@@ -132,26 +132,26 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
   // Handle sending a message
   const handleSend = (e?: React.FormEvent) => {
     e?.preventDefault();
-    
+
     if (!input.trim()) return;
-    
+
     const userMessage = {
       id: Date.now().toString(),
       content: input,
       sender: 'user' as const,
       timestamp: new Date()
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setInput("");
-    
+
     processMessage(input);
   };
 
   // Handle using a smart prompt
   const handleUsePrompt = () => {
     if (!currentPrompt) return;
-    
+
     setInput(currentPrompt);
     const promptElement = document.getElementById('chat-input');
     promptElement?.focus();
@@ -165,7 +165,7 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {!isOpen ? (
-        <Button 
+        <Button
           onClick={toggleChat}
           className="rounded-full size-14 shadow-lg flex items-center justify-center bg-primary hover:bg-primary/90"
         >
@@ -180,7 +180,7 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
                 <AvatarFallback className="text-primary">AI</AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-sm font-medium">StudioX Assistant</h3>
+                <h3 className="text-sm font-medium">Kasilam Media production Assistant</h3>
                 <p className="text-xs text-muted-foreground">Always here to help</p>
               </div>
             </div>
@@ -188,22 +188,22 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
+
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
-              <div 
+              <div
                 key={message.id}
                 className={cn(
                   "flex",
                   message.sender === "user" ? "justify-end" : "justify-start"
                 )}
               >
-                <div 
+                <div
                   className={cn(
                     "max-w-[80%] rounded-lg px-4 py-2 text-sm",
-                    message.sender === "user" 
-                      ? "bg-primary text-primary-foreground" 
+                    message.sender === "user"
+                      ? "bg-primary text-primary-foreground"
                       : "bg-muted"
                   )}
                 >
@@ -220,7 +220,7 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
             )}
             <div ref={messagesEndRef} />
           </div>
-          
+
           {/* Smart Prompt */}
           {currentPrompt && (
             <div className="px-3 py-2 border-t border-border">
@@ -228,9 +228,9 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
                 <p className="text-xs text-muted-foreground flex-1">
                   <span className="font-medium">Try asking:</span> {currentPrompt}
                 </p>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleUsePrompt}
                   className="text-xs h-7"
                 >
@@ -239,7 +239,7 @@ const AIChat: React.FC<AIAssistantProps> = ({ initialOpen = false }) => {
               </div>
             </div>
           )}
-          
+
           {/* Input Form */}
           <form onSubmit={handleSend} className="p-3 border-t flex items-center space-x-2">
             <Textarea
