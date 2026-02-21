@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 export interface ExpirationBannerProps {
   expirationDate: string;
   onExtend: () => void;
+  isLoading?: boolean;
 }
 
-const ExpirationBanner: React.FC<ExpirationBannerProps> = ({ expirationDate, onExtend }) => {
+const ExpirationBanner: React.FC<ExpirationBannerProps> = ({ expirationDate, onExtend, isLoading }) => {
   const formattedDate = format(parseISO(expirationDate), 'MMMM dd, yyyy');
-  
+
   return (
     <div className="bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-8 flex items-center justify-between">
       <div className="flex items-center">
@@ -20,8 +21,8 @@ const ExpirationBanner: React.FC<ExpirationBannerProps> = ({ expirationDate, onE
           Your gallery access expires on <strong>{formattedDate}</strong>
         </span>
       </div>
-      <Button variant="outline" size="sm" onClick={onExtend}>
-        Extend Access
+      <Button variant="outline" size="sm" onClick={onExtend} disabled={isLoading}>
+        {isLoading ? "Extending..." : "Extend Access"}
       </Button>
     </div>
   );

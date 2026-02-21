@@ -1,0 +1,28 @@
+{
+  "runId": 1771670986827,
+  "executedAt": "2026-02-21T10:49:49.050Z",
+  "email": "phase2.e2e.1771670986827@gmail.com",
+  "userId": "ad89a8c5-babe-4cba-aa33-d24df87b4c55",
+  "bookingId": null,
+  "passed": false,
+  "checks": [
+    {
+      "name": "REG-01 register",
+      "passed": true,
+      "detail": "User id returned",
+      "at": "2026-02-21T10:49:48.700Z"
+    },
+    {
+      "name": "LOG-01 login",
+      "passed": false,
+      "detail": "Email not confirmed",
+      "at": "2026-02-21T10:49:49.050Z"
+    },
+    {
+      "name": "RUN",
+      "passed": false,
+      "detail": "Login failed",
+      "at": "2026-02-21T10:49:49.050Z"
+    }
+  ]
+}

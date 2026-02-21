@@ -29,7 +29,12 @@ const DashboardLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(() => {
     // Initialize from local storage if available
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : false;
+    if (!saved) return false;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return false;
+    }
   });
 
   useEffect(() => {

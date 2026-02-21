@@ -9,11 +9,22 @@ export interface GalleryCollectionProps {
 }
 
 const GalleryCollection: React.FC<GalleryCollectionProps> = ({ collections, onSelect }) => {
+  if (collections.length === 0) {
+    return (
+      <Card className="p-12 text-center border-dashed border-2">
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-muted-foreground font-medium">No galleries found</p>
+          <p className="text-sm text-muted-foreground">Your photos will appear here once your session is complete.</p>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <div className="grid gap-16 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {collections.map((collection) => (
-        <Card 
-          key={collection.id} 
+        <Card
+          key={collection.id}
           className="card-dashboard cursor-pointer hover:shadow-md transition-all duration-200 h-full"
           onClick={() => onSelect && onSelect(collection.id)}
         >

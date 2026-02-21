@@ -3,8 +3,15 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
+import { useAdminDashboardStats } from "@/hooks/useAdminDashboard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const StaffPerformance: React.FC = () => {
+  const { data: stats, isLoading } = useAdminDashboardStats();
+
+  if (isLoading) {
+    return <Card className="h-full"><CardContent className="pt-6"><Skeleton className="h-[200px]" /></CardContent></Card>;
+  }
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
@@ -14,30 +21,29 @@ const StaffPerformance: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden overflow-y-auto">
-        <div className="space-y-4">
-          {["Jane Smith", "Alex Brown", "Michael Lee", "Sarah Johnson"].map((name, i) => (
-            <div key={name} className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium flex-shrink-0">
-                  {name.split(' ').map(n => n[0]).join('')}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{name}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {i === 0 ? "Senior Photographer" : 
-                     i === 1 ? "Lighting Specialist" :
-                     i === 2 ? "Junior Photographer" : "Assistant"}
-                  </p>
-                </div>
+        {stats?.staffMembers?.length > 0 ? stats.staffMembers.map((staff: any, i: number) => (
+          <div key={staff.name || i} className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium flex-shrink-0">
+                {staff.name ? staff.name.split(' ').map((n: string) => n[0]).join('') : "S"}
               </div>
-              <div className="text-sm font-medium flex-shrink-0 ml-2">
-                {i === 0 ? "24" : 
-                 i === 1 ? "18" :
-                 i === 2 ? "15" : "12"} bookings
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{staff.name || "Staff Member"}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  Staff Team
+                </p>
               </div>
             </div>
-          ))}
-        </div>
+            <div className="text-sm font-medium flex-shrink-0 ml-2 text-muted-foreground">
+              Active
+            </div>
+          </div>
+        )) : (
+          <div className="flex flex-col items-center justify-center space-y-3 h-full min-h-[150px] text-center px-4">
+            <p className="text-sm font-medium">No staff data available</p>
+            <p className="text-xs text-muted-foreground">Add staff members to track performance.</p>
+          </div>
+        )}
       </CardContent>
       <CardFooter>
         <Button variant="ghost" className="w-full" size="sm">

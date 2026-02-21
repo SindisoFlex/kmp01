@@ -1,0 +1,22 @@
+{
+  "runId": 1771670934882,
+  "executedAt": "2026-02-21T10:48:57.154Z",
+  "email": "phase2.e2e.1771670934882@example.com",
+  "userId": null,
+  "bookingId": null,
+  "passed": false,
+  "checks": [
+    {
+      "name": "REG-01 register",
+      "passed": false,
+      "detail": "Email address \"phase2.e2e.1771670934882@example.com\" is invalid",
+      "at": "2026-02-21T10:48:57.154Z"
+    },
+    {
+      "name": "RUN",
+      "passed": false,
+      "detail": "Registration failed",
+      "at": "2026-02-21T10:48:57.154Z"
+    }
+  ]
+}

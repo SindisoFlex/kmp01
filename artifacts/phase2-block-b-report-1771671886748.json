@@ -1,0 +1,23 @@
+{
+  "runId": 1771671886748,
+  "executedAt": "2026-02-21T11:04:48.049Z",
+  "email": "phase2.e2e.1771671886748@gmail.com",
+  "activeLoginEmail": null,
+  "userId": null,
+  "bookingId": null,
+  "passed": false,
+  "checks": [
+    {
+      "name": "REG-01 register",
+      "passed": false,
+      "detail": "email rate limit exceeded",
+      "at": "2026-02-21T11:04:48.049Z"
+    },
+    {
+      "name": "RUN",
+      "passed": false,
+      "detail": "Registration failed",
+      "at": "2026-02-21T11:04:48.049Z"
+    }
+  ]
+}

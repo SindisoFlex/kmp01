@@ -6,6 +6,7 @@ import { Calendar, Filter, RefreshCw } from "lucide-react";
 import { getBookings } from "@/services/bookingService";
 import { useAuth } from '@/contexts/AuthContext';
 import type { Booking } from "@/types/booking";
+import { formatCurrency, formatDateTime, toSafeNumber } from "@/utils/formatting";
 
 const DashboardBookings: React.FC = () => {
   const { user } = useAuth();
@@ -129,12 +130,23 @@ const DashboardBookings: React.FC = () => {
                         {booking.status}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {booking.location || "Location pending"} • R{Number(booking.total_amount || 0).toFixed(2)}
+                        {booking.location || "Location pending"} • {formatCurrency(toSafeNumber(booking.total_amount), "ZAR")}
                       </span>
                     </div>
+                    {booking.payment_status === "paid" && booking.invoice && (
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        <div>Invoice: {booking.invoice.invoice_number}</div>
+                        <div>Paid: {formatDateTime(booking.invoice.paid_at)}</div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-2 mt-3 md:mt-0">
+                    {booking.payment_status === "paid" && booking.invoice && (
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to={`/dashboard/invoices/${booking.invoice.id}`}>Download Invoice</Link>
+                      </Button>
+                    )}
                     {String(booking.status).toLowerCase() === "completed" && (
                       <Button variant="outline" size="sm" asChild>
                         <Link to="/dashboard/gallery">View Gallery</Link>

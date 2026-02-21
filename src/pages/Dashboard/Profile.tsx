@@ -16,19 +16,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { UserCheck } from "lucide-react";
+import { formatDateTime } from "@/utils/formatting";
 
 const UserProfile: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    whatsapp: user?.whatsapp || '',
-    bio: user?.bio || '',
-    isBusinessAccount: user?.isBusinessAccount || false
+    name: '',
+    email: '',
+    phone: '',
+    whatsapp: '',
+    bio: '',
+    isBusinessAccount: false
   });
+
+  // Sync formData with user when user data is loaded
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        whatsapp: user.whatsapp || '',
+        bio: user.bio || '',
+        isBusinessAccount: !!user.isBusinessAccount
+      });
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -50,16 +65,28 @@ const UserProfile: React.FC = () => {
         title: "Profile Updated",
         description: "Your profile information has been updated successfully.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An error occurred while saving your profile.";
       toast({
         title: "Update Failed",
-        description: error.message || "An error occurred while saving your profile.",
+        description: message,
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (!user && !isLoading) {
+    return (
+      <div className="container max-w-3xl mx-auto py-12 text-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-muted rounded w-1/4 mx-auto"></div>
+          <Card className="h-64 bg-muted/50"></Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-3xl mx-auto py-6">
@@ -169,11 +196,11 @@ const UserProfile: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Account Created:</span>
-              <span className="font-medium">January 15, 2025</span>
+              <span className="font-medium">Unavailable</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Last Login:</span>
-              <span className="font-medium">Today</span>
+              <span className="font-medium">{formatDateTime(user?.lastActivityAt || null)}</span>
             </div>
           </div>
         </CardContent>

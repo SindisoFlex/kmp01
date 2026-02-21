@@ -4,6 +4,7 @@ import { Camera, Video, Globe, Brain, Megaphone, Printer, CalendarDays, Clock, M
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { loyaltyConfig } from "@/utils/loyaltyUtils";
+import { formatCurrency, toSafeNumber } from "@/utils/formatting";
 
 interface BookingSummaryProps {
   bookingData: {
@@ -25,7 +26,7 @@ interface BookingSummaryProps {
     vatAmount: number;
     totalAmount: number;
   };
-  onUpdate?: (data: any) => void;
+  onUpdate?: (data: Record<string, unknown>) => void;
 }
 
 // Mapping for service names and icons
@@ -219,7 +220,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData, priceBreak
               <ul className="space-y-1 text-sm">
                 {bookingData.attachments.map((file, index) => (
                   <li key={index} className="text-muted-foreground">
-                    {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                    {file.name} ({new Intl.NumberFormat("en-ZA", { maximumFractionDigits: 1 }).format(toSafeNumber(file.size) / 1024)} KB)
                   </li>
                 ))}
               </ul>
@@ -247,36 +248,36 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData, priceBreak
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
-                <span>R{priceBreakdown.subtotal.toFixed(2)}</span>
+                <span>{formatCurrency(priceBreakdown.subtotal, "ZAR")}</span>
               </div>
 
               {priceBreakdown.tierDiscountAmount > 0 && (
                 <div className="flex justify-between text-sm text-primary font-medium">
                   <span>Loyalty Discount ({user?.membershipTier || 'free'})</span>
-                  <span>-R{priceBreakdown.tierDiscountAmount.toFixed(2)}</span>
+                  <span>-{formatCurrency(priceBreakdown.tierDiscountAmount, "ZAR")}</span>
                 </div>
               )}
 
               {priceBreakdown.staffDiscountAmount > 0 && (
                 <div className="flex justify-between text-sm text-green-600 font-medium">
                   <span>Staff Discount (15%)</span>
-                  <span>-R{priceBreakdown.staffDiscountAmount.toFixed(2)}</span>
+                  <span>-{formatCurrency(priceBreakdown.staffDiscountAmount, "ZAR")}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-sm border-t pt-2">
                 <span>Total (Excl. VAT)</span>
-                <span>R{priceBreakdown.amountBeforeVat.toFixed(2)}</span>
+                <span>{formatCurrency(priceBreakdown.amountBeforeVat, "ZAR")}</span>
               </div>
 
               <div className="flex justify-between text-sm">
                 <span>VAT (15%)</span>
-                <span>R{priceBreakdown.vatAmount.toFixed(2)}</span>
+                <span>{formatCurrency(priceBreakdown.vatAmount, "ZAR")}</span>
               </div>
 
               <div className="flex justify-between text-lg font-bold pt-2 border-t mt-4">
                 <span>Grand Total</span>
-                <span className="text-primary">R{priceBreakdown.totalAmount.toFixed(2)}</span>
+                <span className="text-primary">{formatCurrency(priceBreakdown.totalAmount, "ZAR")}</span>
               </div>
 
               <div className="bg-primary/5 p-3 rounded-md mt-4 border border-primary/10 text-center">

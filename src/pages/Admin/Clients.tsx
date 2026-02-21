@@ -38,106 +38,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MembershipTier } from "@/utils/loyaltyUtils";
+import { useAdminClients } from "@/hooks/useAdminClients";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Sample client data
-const mockClients = [
-  {
-    id: "client-1",
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    phone: "+27 12 345 6789",
-    whatsapp: "+27 12 345 6789",
-    joinDate: "2023-10-15",
-    lastActivity: "2024-05-01",
-    membershipTier: "gold" as MembershipTier,
-    bookingsCount: 8,
-    bookingsValue: "R24,500",
-    activeGalleries: 3,
-    assignedStaff: "John Wilson",
-    status: "active"
-  },
-  {
-    id: "client-2",
-    name: "David Smith",
-    email: "david@example.com",
-    phone: "+27 23 456 7890",
-    whatsapp: "+27 23 456 7890",
-    joinDate: "2024-01-22",
-    lastActivity: "2024-04-28",
-    membershipTier: "silver" as MembershipTier,
-    bookingsCount: 4,
-    bookingsValue: "R12,800",
-    activeGalleries: 2,
-    assignedStaff: "Emily Davis",
-    status: "active"
-  },
-  {
-    id: "client-3",
-    name: "Amanda Brown",
-    email: "amanda@example.com",
-    phone: "+27 34 567 8901",
-    whatsapp: "+27 34 567 8901",
-    joinDate: "2024-02-10",
-    lastActivity: "2024-03-15",
-    membershipTier: "bronze" as MembershipTier,
-    bookingsCount: 1,
-    bookingsValue: "R4,200",
-    activeGalleries: 1,
-    assignedStaff: "Michael Chen",
-    status: "inactive"
-  },
-  {
-    id: "client-4",
-    name: "Robert Williams",
-    email: "robert@example.com",
-    phone: "+27 45 678 9012",
-    whatsapp: "+27 45 678 9012",
-    joinDate: "2023-08-05",
-    lastActivity: "2024-04-20",
-    membershipTier: "vip" as MembershipTier,
-    bookingsCount: 12,
-    bookingsValue: "R48,600",
-    activeGalleries: 5,
-    assignedStaff: "Emily Davis",
-    status: "active"
-  },
-];
-
-const mockBookings = [
-  {
-    id: "booking-1",
-    date: "2024-04-15",
-    service: "Wedding Photography",
-    location: "Cape Town Beach",
-    amount: "R15,000",
-    status: "completed",
-  },
-  {
-    id: "booking-2",
-    date: "2024-03-22",
-    service: "Family Portrait",
-    location: "Studio",
-    amount: "R3,500",
-    status: "completed",
-  }
-];
-
-const mockGalleries = [
-  {
-    id: "gallery-1",
-    title: "Wedding Day - Beach Ceremony",
-    date: "2024-04-15",
-    type: "Wedding",
-    images: 145,
-    videos: 2,
-    viewed: 32,
-    expirationDate: "2026-04-15",
-    status: "active"
-  }
-];
+// Removed static mockClients, mockBookings, mockGalleries arrays
 
 const ClientManagement: React.FC = () => {
-  const [clientList, setClientList] = useState(mockClients);
+  const { clients: clientList, isLoading, updateTier } = useAdminClients();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const [filterTier, setFilterTier] = useState("all");
@@ -172,26 +79,24 @@ const ClientManagement: React.FC = () => {
     }
   };
 
-  const handleUpdateTier = () => {
+  const handleUpdateTier = async () => {
     if (!currentClient) return;
 
-    const updatedClients = clientList.map(client => {
-      if (client.id === currentClient.id) {
-        return {
-          ...client,
-          membershipTier: selectedTier
-        };
-      }
-      return client;
-    });
+    try {
+      await updateTier({ clientId: currentClient.id, tier: selectedTier });
+      setIsEditTierOpen(false);
 
-    setClientList(updatedClients);
-    setIsEditTierOpen(false);
-
-    toast({
-      title: "Tier Updated",
-      description: `${currentClient.name}'s membership level has been updated to ${selectedTier.toUpperCase()}.`,
-    });
+      toast({
+        title: "Tier Updated",
+        description: `${currentClient.name}'s membership level has been updated to ${selectedTier.toUpperCase()}.`,
+      });
+    } catch (err: any) {
+      toast({
+        title: "Update Failed",
+        description: err.message,
+        variant: "destructive"
+      });
+    }
   };
 
   const getTierBadgeVariant = (tier: MembershipTier) => {
@@ -203,6 +108,15 @@ const ClientManagement: React.FC = () => {
       default: return "outline";
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center"><Skeleton className="h-10 w-[200px]" /><Skeleton className="h-10 w-[120px]" /></div>
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    );
+  }
 
   const filteredClients = getFilteredAndSortedClients();
 
@@ -367,13 +281,17 @@ const ClientManagement: React.FC = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {mockBookings.map((b) => (
+                        {currentClient.recentBookings?.length > 0 ? currentClient.recentBookings.map((b: any) => (
                           <TableRow key={b.id}>
                             <TableCell>{b.date}</TableCell>
                             <TableCell>{b.service}</TableCell>
                             <TableCell><Badge variant="outline">{b.status}</Badge></TableCell>
                           </TableRow>
-                        ))}
+                        )) : (
+                          <TableRow>
+                            <TableCell colSpan={3} className="text-center text-muted-foreground py-4">No bookings found</TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
                   </TabsContent>
@@ -386,12 +304,16 @@ const ClientManagement: React.FC = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {mockGalleries.map((g) => (
+                        {currentClient.recentGalleries?.length > 0 ? currentClient.recentGalleries.map((g: any) => (
                           <TableRow key={g.id}>
                             <TableCell>{g.title}</TableCell>
                             <TableCell>{g.type}</TableCell>
                           </TableRow>
-                        ))}
+                        )) : (
+                          <TableRow>
+                            <TableCell colSpan={2} className="text-center text-muted-foreground py-4">No active galleries</TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
                   </TabsContent>

@@ -14,35 +14,14 @@ const ActivityList: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden overflow-y-auto">
-        <div className="space-y-4">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="flex items-center justify-between border-b pb-2">
-              <div className="flex items-center min-w-0">
-                <div className={`w-2 h-2 rounded-full mr-2 flex-shrink-0 ${
-                  i % 3 === 0 ? "bg-green-500" : 
-                  i % 3 === 1 ? "bg-blue-500" : "bg-yellow-500"
-                }`} />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {i % 3 === 0 ? "New booking created" : 
-                     i % 3 === 1 ? "Client profile updated" : 
-                     "Gallery photos uploaded"}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {i % 3 === 0 ? "Client #" + (100 + i) + " booked a portrait session" :
-                     i % 3 === 1 ? "Staff member updated client information" :
-                     "12 new photos added to client gallery"}
-                  </p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground flex-shrink-0 ml-2">
-                {i === 1 ? "Just now" : 
-                 i === 2 ? "5m ago" :
-                 i === 3 ? "1h ago" :
-                 i === 4 ? "3h ago" : "Yesterday"}
-              </p>
-            </div>
-          ))}
+        <div className="flex flex-col items-center justify-center space-y-3 h-full min-h-[150px] text-center px-4">
+          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+          </div>
+          <p className="text-sm font-medium">Activity Logging Inactive</p>
+          <p className="text-xs text-muted-foreground">
+            Platform audit logs will appear here once the events system is fully integrated.
+          </p>
         </div>
       </CardContent>
       <CardFooter>

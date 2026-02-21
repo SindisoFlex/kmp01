@@ -1,56 +1,99 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { 
-  Bell, 
-  Lock, 
-  Mail, 
-  Phone, 
-  Shield, 
+import {
+  Bell,
+  Lock,
+  Mail,
+  Phone,
+  Shield,
   UserCog
 } from "lucide-react";
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
-  
-  const handleNotificationToggle = (type: string, enabled: boolean) => {
-    console.log(`${type} notifications ${enabled ? 'enabled' : 'disabled'}`);
+
+  const STORAGE_KEY = "user-dashboard-settings";
+  const [settings, setSettings] = useState({
+    emailBooking: true,
+    emailGallery: true,
+    emailMarketing: false,
+    smsReminder: true,
+    smsUpdates: true,
+    twoFactor: false,
+    privateProfile: false,
+    dataCollection: true,
+  });
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Partial<typeof settings>;
+      setSettings((prev) => ({ ...prev, ...parsed }));
+    } catch {
+      // Ignore malformed local settings to avoid breaking rendering.
+    }
+  }, []);
+
+  const updateSetting = (key: keyof typeof settings, enabled: boolean, label: string) => {
+    const next = { ...settings, [key]: enabled };
+    setSettings(next);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     toast({
       title: "Settings Updated",
-      description: `${type} notifications ${enabled ? 'enabled' : 'disabled'}.`,
+      description: `${label} ${enabled ? "enabled" : "disabled"}.`,
     });
   };
-  
+
   const handlePasswordReset = () => {
     toast({
       title: "Password Reset Email Sent",
       description: "Check your email inbox for instructions to reset your password.",
     });
   };
-  
+
+  const handleManageSessions = () => {
+    toast({
+      title: "Session Manager Unavailable",
+      description: "Session management will be available soon. Your current session remains active.",
+    });
+  };
+
+  if (!user) {
+    return (
+      <div className="container max-w-4xl mx-auto py-12 text-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-muted rounded w-1/4 mx-auto"></div>
+          <Card className="h-96 bg-muted/50"></Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container max-w-4xl mx-auto py-6">
       <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
-      
+
       <Tabs defaultValue="notifications" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
           <TabsTrigger value="preferences">Preferences</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="notifications">
           <Card>
             <CardHeader>
@@ -60,78 +103,79 @@ const SettingsPage: React.FC = () => {
               </div>
               <CardDescription>Manage how you receive notifications.</CardDescription>
             </CardHeader>
-            
+
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <h3 className="font-medium">Email Notifications</h3>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="emailBooking" className="font-normal">Booking Confirmations</Label>
                     <p className="text-sm text-muted-foreground">Receive emails when your booking is confirmed</p>
                   </div>
-                  <Switch 
-                    id="emailBooking" 
-                    defaultChecked 
-                    onCheckedChange={(checked) => handleNotificationToggle('Booking confirmation email', checked)}
+                  <Switch
+                    id="emailBooking"
+                    checked={settings.emailBooking}
+                    onCheckedChange={(checked) => updateSetting("emailBooking", checked, "Booking confirmation email")}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="emailGallery" className="font-normal">Gallery Updates</Label>
                     <p className="text-sm text-muted-foreground">Receive emails when new photos are added to your gallery</p>
                   </div>
-                  <Switch 
-                    id="emailGallery" 
-                    defaultChecked 
-                    onCheckedChange={(checked) => handleNotificationToggle('Gallery update email', checked)}
+                  <Switch
+                    id="emailGallery"
+                    checked={settings.emailGallery}
+                    onCheckedChange={(checked) => updateSetting("emailGallery", checked, "Gallery update email")}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="emailMarketing" className="font-normal">Marketing & Promotions</Label>
                     <p className="text-sm text-muted-foreground">Receive promotional emails and special offers</p>
                   </div>
-                  <Switch 
-                    id="emailMarketing" 
-                    onCheckedChange={(checked) => handleNotificationToggle('Marketing email', checked)}
+                  <Switch
+                    id="emailMarketing"
+                    checked={settings.emailMarketing}
+                    onCheckedChange={(checked) => updateSetting("emailMarketing", checked, "Marketing email")}
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <h3 className="font-medium">SMS Notifications</h3>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="smsReminder" className="font-normal">Appointment Reminders</Label>
                     <p className="text-sm text-muted-foreground">Receive text reminders before your appointments</p>
                   </div>
-                  <Switch 
-                    id="smsReminder" 
-                    defaultChecked 
-                    onCheckedChange={(checked) => handleNotificationToggle('Appointment reminder SMS', checked)}
+                  <Switch
+                    id="smsReminder"
+                    checked={settings.smsReminder}
+                    onCheckedChange={(checked) => updateSetting("smsReminder", checked, "Appointment reminder SMS")}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="smsUpdates" className="font-normal">Booking Updates</Label>
                     <p className="text-sm text-muted-foreground">Receive text updates about your bookings</p>
                   </div>
-                  <Switch 
-                    id="smsUpdates" 
-                    defaultChecked 
-                    onCheckedChange={(checked) => handleNotificationToggle('Booking update SMS', checked)}
+                  <Switch
+                    id="smsUpdates"
+                    checked={settings.smsUpdates}
+                    onCheckedChange={(checked) => updateSetting("smsUpdates", checked, "Booking update SMS")}
                   />
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="security">
           <Card>
             <CardHeader>
@@ -141,44 +185,48 @@ const SettingsPage: React.FC = () => {
               </div>
               <CardDescription>Manage your account security settings.</CardDescription>
             </CardHeader>
-            
+
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <h3 className="font-medium">Password</h3>
-                
+
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Your password was last changed on January 15, 2025</p>
+                  <p className="text-sm text-muted-foreground mb-2">Use password reset if you suspect unauthorized access.</p>
                   <Button onClick={handlePasswordReset}>
                     <Lock className="h-4 w-4 mr-2" />
                     Reset Password
                   </Button>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <h3 className="font-medium">Two-Factor Authentication</h3>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="twoFactor" className="font-normal">Enable Two-Factor Authentication</Label>
                     <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
                   </div>
-                  <Switch id="twoFactor" />
+                  <Switch
+                    id="twoFactor"
+                    checked={settings.twoFactor}
+                    onCheckedChange={(checked) => updateSetting("twoFactor", checked, "Two-factor authentication")}
+                  />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <h3 className="font-medium">Login Sessions</h3>
-                
+
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">You're currently logged in on 1 device</p>
-                  <Button variant="outline">Manage Sessions</Button>
+                  <Button variant="outline" onClick={handleManageSessions}>Manage Sessions</Button>
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="preferences">
           <Card>
             <CardHeader>
@@ -188,11 +236,11 @@ const SettingsPage: React.FC = () => {
               </div>
               <CardDescription>Manage your account preferences and contact information.</CardDescription>
             </CardHeader>
-            
+
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <h3 className="font-medium">Contact Information</h3>
-                
+
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Mail className="h-4 w-4 text-muted-foreground" />
@@ -207,10 +255,10 @@ const SettingsPage: React.FC = () => {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <h3 className="font-medium">Language & Region</h3>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="language" className="font-normal">Language</Label>
@@ -225,24 +273,32 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <h3 className="font-medium">Privacy</h3>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="privateProfile" className="font-normal">Private Profile</Label>
                     <p className="text-sm text-muted-foreground">Hide your profile from other users</p>
                   </div>
-                  <Switch id="privateProfile" />
+                  <Switch
+                    id="privateProfile"
+                    checked={settings.privateProfile}
+                    onCheckedChange={(checked) => updateSetting("privateProfile", checked, "Private profile")}
+                  />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="dataCollection" className="font-normal">Data Collection</Label>
                     <p className="text-sm text-muted-foreground">Allow us to collect anonymous usage data</p>
                   </div>
-                  <Switch id="dataCollection" defaultChecked />
+                  <Switch
+                    id="dataCollection"
+                    checked={settings.dataCollection}
+                    onCheckedChange={(checked) => updateSetting("dataCollection", checked, "Anonymous data collection")}
+                  />
                 </div>
               </div>
             </CardContent>

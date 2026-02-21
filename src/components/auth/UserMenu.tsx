@@ -12,10 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 import AuthDialog from "./AuthDialog";
 import { determineTier } from "@/utils/loyaltyUtils";
-import { mockGalleries } from "@/utils/galleryUtils";
 
 const UserMenu: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -92,7 +90,6 @@ const UserMenu: React.FC = () => {
     .slice(0, 2);
 
   const currentTier = user.loyaltyState?.individual_tier || determineTier(user.loyaltyState?.individual_completed_bookings || 0);
-  const galleryCount = mockGalleries.length;
 
   const getTierBadgeStyle = () => {
     switch (currentTier) {
@@ -138,12 +135,7 @@ const UserMenu: React.FC = () => {
           <Link to="/dashboard/bookings" className="cursor-pointer">My Bookings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/dashboard/gallery" className="cursor-pointer flex items-center justify-between">
-            <span>My Gallery</span>
-            <Badge variant="outline" className="ml-auto text-xs py-0">
-              {galleryCount}
-            </Badge>
-          </Link>
+          <Link to="/dashboard/gallery" className="cursor-pointer">My Gallery</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

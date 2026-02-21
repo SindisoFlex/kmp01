@@ -10,9 +10,18 @@ export interface Booking {
     address?: string;
     notes?: string;
     status: BookingStatus;
+    payment_status?: 'pending' | 'paid';
     created_at: string;
     total_amount: number;
     staff_discount_applied: boolean;
+    invoice?: {
+        id: string;
+        invoice_number: string;
+        paid_at: string | null;
+        status: 'pending' | 'paid';
+        amount: number | string;
+        currency: string;
+    } | null;
 }
 
 export interface BookingFormData {

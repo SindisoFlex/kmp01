@@ -1,6 +1,7 @@
 
 import { supabase } from "@/lib/supabase";
 import { Booking } from "@/types/booking";
+import { getInvoicesByBookingIds } from "@/services/invoiceService";
 
 type CreateBookingInput = {
     service: string;
@@ -49,7 +50,14 @@ export const getBookings = async (userId: string): Promise<Booking[]> => {
         .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data as Booking[];
+
+    const bookings = (data || []) as Booking[];
+    const invoiceMap = await getInvoicesByBookingIds(bookings.map((b) => b.id));
+
+    return bookings.map((booking) => ({
+        ...booking,
+        invoice: invoiceMap.get(booking.id) || null,
+    }));
 };
 
 export const getBookingById = async (id: string): Promise<Booking> => {

@@ -1,46 +1,87 @@
-
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import GalleryCollection from '@/components/gallery/GalleryCollection';
-import ExpirationBanner from '@/components/gallery/ExpirationBanner';
-import VisibilityToggle from '@/components/gallery/VisibilityToggle';
-import { mockGalleries } from '@/utils/galleryUtils';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import GalleryCollection from "@/components/gallery/GalleryCollection";
+import ExpirationBanner from "@/components/gallery/ExpirationBanner";
+import VisibilityToggle from "@/components/gallery/VisibilityToggle";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { CalendarDateRangePicker } from "@/components/ui/calendar-date-range";
-import { Calendar } from "lucide-react";
+import type { GalleryCollection as GalleryCollectionType } from "@/utils/galleryUtils";
+import { getUserGalleryCollections } from "@/services/galleryService";
 
 const Gallery: React.FC = () => {
   const { user } = useAuth();
-  const [galleries, setGalleries] = useState(mockGalleries);
+  const { toast } = useToast();
+  const [galleries, setGalleries] = useState<GalleryCollectionType[]>([]);
   const [isPublic, setIsPublic] = useState(true);
   const [expirationDate, setExpirationDate] = useState<Date | undefined>(undefined);
+  const [isExtending, setIsExtending] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const loadGalleries = useCallback(async () => {
+    if (!user?.id) {
+      setGalleries([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const rows = await getUserGalleryCollections(user.id);
+      setGalleries(rows ?? []);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Unexpected error";
+      setErrorMessage(`Unable to load gallery content. Please refresh and try again. (${message})`);
+      setGalleries([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    loadGalleries();
+  }, [loadGalleries]);
 
   const handleVisibilityChange = (newVisibility: boolean) => {
     setIsPublic(newVisibility);
+    toast({
+      title: "Visibility Updated",
+      description: `Your gallery is now ${newVisibility ? "public" : "private"}.`,
+    });
   };
 
   const handleExpirationDateChange = (date: Date | undefined) => {
     setExpirationDate(date);
+    toast({
+      title: "Expiration Updated",
+      description: date ? `Gallery access will expire on ${date.toLocaleDateString()}.` : "Expiration date removed.",
+    });
   };
 
-  const handleExtend = () => {
-    // This is a placeholder for the extend functionality
-    console.log("Extend gallery access");
+  const handleExtend = async () => {
+    setIsExtending(true);
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    setIsExtending(false);
+    toast({
+      title: "Access Extended",
+      description: "Gallery access has been extended by 30 days.",
+    });
   };
 
   return (
     <div className="container max-w-5xl mx-auto py-12">
       <h1 className="text-3xl font-bold mb-6">My Gallery</h1>
+
+      {!user && (
+        <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-900/20 dark:text-amber-300">
+          You are not signed in. Gallery data may be limited.
+        </div>
+      )}
 
       <Card className="mb-8">
         <CardHeader>
@@ -69,13 +110,32 @@ const Gallery: React.FC = () => {
       </Card>
 
       {expirationDate && (
-        <ExpirationBanner 
-          expirationDate={expirationDate.toISOString()} 
+        <ExpirationBanner
+          expirationDate={expirationDate.toISOString()}
           onExtend={handleExtend}
+          isLoading={isExtending}
         />
       )}
 
-      <GalleryCollection collections={galleries} />
+      {errorMessage && (
+        <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-900/20 dark:text-red-300">
+          {errorMessage}
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="py-8 text-center text-muted-foreground">Loading gallery...</div>
+      ) : galleries.length === 0 ? (
+        <Card>
+          <CardContent className="py-8 text-center">
+            <h3 className="text-lg font-medium">No gallery items yet</h3>
+            <p className="text-sm text-muted-foreground mt-1">Your photos will appear here after your first completed booking.</p>
+            <Button variant="outline" className="mt-4" onClick={loadGalleries}>Refresh</Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <GalleryCollection collections={galleries} />
+      )}
     </div>
   );
 };

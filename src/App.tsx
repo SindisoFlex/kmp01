@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { usePreloadEssentials } from "@/hooks/use-preload";
+import { trackReferralOpenFromUrl } from "@/services/referralService";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -19,6 +21,7 @@ import AIChat from "./components/ai/AIChat";
 
 // Client dashboard
 import DashboardLayout from "./components/dashboard/DashboardLayout";
+import ErrorBoundary from "./components/auth/ErrorBoundary";
 import DashboardIndex from "./pages/Dashboard/Index";
 import DashboardBookings from "./pages/Dashboard/Bookings";
 import BookingWizardPage from "./pages/Dashboard/BookingWizard";
@@ -71,6 +74,21 @@ const App = () => {
   // Preload essential resources
   usePreloadEssentials();
 
+  useEffect(() => {
+    const onUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error("Unhandled rejection:", event.reason);
+    };
+
+    window.addEventListener("unhandledrejection", onUnhandledRejection);
+    return () => window.removeEventListener("unhandledrejection", onUnhandledRejection);
+  }, []);
+
+  useEffect(() => {
+    trackReferralOpenFromUrl().catch((error: unknown) => {
+      console.error("Failed to track referral from URL:", error);
+    });
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -94,7 +112,13 @@ const App = () => {
                 <Route path="/auth/reset-password" element={<ResetPassword />} />
 
                 {/* Client Dashboard Routes */}
-                <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route path="/dashboard" element={
+                  <RoleGuard allowedRoles={["client", "guest", "admin", "staff"]} redirectTo="/">
+                    <ErrorBoundary>
+                      <DashboardLayout />
+                    </ErrorBoundary>
+                  </RoleGuard>
+                }>
                   <Route index element={<DashboardIndex />} />
                   <Route path="bookings" element={<DashboardBookings />} />
                   <Route path="booking/new" element={<BookingWizardPage />} />

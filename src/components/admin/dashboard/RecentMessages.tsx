@@ -4,11 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
 
+import { useAdminDashboardStats } from "@/hooks/useAdminDashboard";
+import { Skeleton } from "@/components/ui/skeleton";
+
 interface RecentMessagesProps {
-  unreadCount: number;
+  unreadCount?: number;
 }
 
 const RecentMessages: React.FC<RecentMessagesProps> = ({ unreadCount }) => {
+  const { data: stats, isLoading } = useAdminDashboardStats();
+
+  if (isLoading) {
+    return <Card className="h-full"><CardContent className="pt-6"><Skeleton className="h-[200px]" /></CardContent></Card>;
+  }
+
+  const displayCount = unreadCount ?? stats?.messagesUnread ?? 0;
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -18,36 +28,18 @@ const RecentMessages: React.FC<RecentMessagesProps> = ({ unreadCount }) => {
             Unread client communications
           </CardDescription>
         </div>
-        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-primary">
+        <div className="flex flex-col items-center justify-center h-6 min-w-6 px-2 rounded-full bg-primary">
           <span className="text-xs font-medium text-white">
-            {unreadCount}
+            {displayCount}
           </span>
         </div>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden overflow-y-auto">
         <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-start space-x-2 border-b pb-4 last:border-0 last:pb-0">
-              <div className="min-w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium flex-shrink-0">
-                {String.fromCharCode(64 + i)}
-              </div>
-              <div className="min-w-0 flex-grow">
-                <p className="text-sm font-medium truncate">
-                  {i === 1 ? "Alice Johnson" : 
-                   i === 2 ? "Bob Smith" : "Carol Williams"}
-                </p>
-                <p className="text-xs text-muted-foreground line-clamp-2">
-                  {i === 1 ? "I'd like to discuss my wedding photoshoot plans with you. Can we schedule a call?" : 
-                   i === 2 ? "When will my family portrait gallery be ready? I'm excited to see the photos!" : 
-                   "Thanks for the quick response. I'll check the contract and get back to you tomorrow."}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {i === 1 ? "5m ago" : 
-                   i === 2 ? "1h ago" : "2h ago"}
-                </p>
-              </div>
-            </div>
-          ))}
+          <div className="flex flex-col items-center justify-center space-y-3 h-full min-h-[150px] text-center px-4">
+            <p className="text-sm font-medium">No recent messages</p>
+            <p className="text-xs text-muted-foreground">Inbox is empty.</p>
+          </div>
         </div>
       </CardContent>
       <CardFooter>

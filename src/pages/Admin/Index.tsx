@@ -14,22 +14,27 @@ import { CalendarCheck, ArrowUpRight, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-// Sample data for the dashboard
-const mockStats = {
-  totalClients: 352,
-  totalStaff: 8,
-  activeBookings: 28,
-  completedBookings: 1240,
-  totalRevenue: "R24,320",
-  newClientsThisMonth: 42,
-  messagesUnread: 5,
-  pendingApprovals: 7,
-  loyaltyMilestones: 3
-};
+import { useAdminDashboardStats } from "@/hooks/useAdminDashboard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const isMobile = useIsMobile();
+  const { data: stats, isLoading } = useAdminDashboardStats();
+
+  if (isLoading || !stats) {
+    return (
+      <div className="space-y-6 w-full max-w-full overflow-hidden p-6">
+        <Skeleton className="h-10 w-48 mb-6" />
+        <Skeleton className="h-[120px] w-full mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Skeleton className="h-[300px]" />
+          <Skeleton className="h-[300px]" />
+          <Skeleton className="h-[300px]" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 w-full max-w-full overflow-hidden">
@@ -43,7 +48,7 @@ const AdminDashboard = () => {
         <div className="flex items-center space-x-2">
           <Badge variant="outline" className="bg-primary/10 text-primary">
             <Bell className="h-3 w-3 mr-1" />
-            {mockStats.pendingApprovals} pending
+            {stats.pendingApprovals} pending
           </Badge>
           <Button size="sm" variant="outline" asChild>
             <Link to="/admin/bookings">
@@ -54,7 +59,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Statistics Cards */}
-      <StatsSummary stats={mockStats} />
+      <StatsSummary stats={stats} />
 
       {/* New High-priority Items */}
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
@@ -62,7 +67,7 @@ const AdminDashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium flex items-center justify-between">
               Pending Approvals
-              <Badge variant="outline" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">{mockStats.pendingApprovals}</Badge>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">{stats.pendingApprovals}</Badge>
             </CardTitle>
             <CardDescription>
               Bookings requiring your attention
@@ -70,22 +75,20 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                { name: "Wedding Photography", client: "Smith Family", date: "Tomorrow, 10:00 AM" },
-                { name: "Product Shoot", client: "TechGear LLC", date: "May 24, 2:30 PM" },
-                { name: "Corporate Headshots", client: "Finance Co", date: "May 25, 9:00 AM" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
+              {stats.pendingBookingsList?.length > 0 ? stats.pendingBookingsList.map((item: any) => (
+                <div key={item.id} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
                   <div>
-                    <p className="font-medium text-sm">{item.name}</p>
-                    <p className="text-xs text-muted-foreground">{item.client}</p>
+                    <p className="font-medium text-sm">{item.category} {item.type}</p>
+                    <p className="text-xs text-muted-foreground">{item.user?.name || "Client"}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs">{item.date}</p>
-                    <Link to="/admin/bookings" className="text-xs text-primary hover:underline">Review</Link>
+                    <p className="text-xs">{item.date_time ? new Date(item.date_time).toLocaleDateString() : 'TBD'}</p>
+                    <Link to={`/admin/bookings?id=${item.id}`} className="text-xs text-primary hover:underline">Review</Link>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">No pending approvals</p>
+              )}
             </div>
             <div className="mt-4 pt-3 border-t">
               <Link to="/admin/bookings?filter=pending" className="text-sm text-primary hover:underline flex items-center justify-end">
@@ -107,19 +110,19 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                { time: "10:00 AM", event: "Team Meeting", location: "Conference Room" },
-                { time: "1:30 PM", event: "Client Consultation", location: "Studio A" },
-                { time: "4:00 PM", event: "Equipment Check", location: "Storage Room" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
+              {stats.todayScheduleList?.length > 0 ? stats.todayScheduleList.map((item: any) => (
+                <div key={item.id} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
                   <div>
-                    <p className="font-medium text-sm">{item.event}</p>
-                    <p className="text-xs text-muted-foreground">{item.location}</p>
+                    <p className="font-medium text-sm">{item.category} {item.type}</p>
+                    <p className="text-xs text-muted-foreground">{item.location || "TBD"}</p>
                   </div>
-                  <Badge variant="outline" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">{item.time}</Badge>
+                  <Badge variant="outline" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                    {new Date(item.date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </Badge>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">No sessions scheduled for today</p>
+              )}
             </div>
             <div className="mt-4 pt-3 border-t">
               <Link to="/admin/bookings" className="text-sm text-primary hover:underline flex items-center justify-end">
@@ -133,7 +136,7 @@ const AdminDashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium flex items-center justify-between">
               Loyalty Program
-              <Badge variant="outline" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{mockStats.loyaltyMilestones} New</Badge>
+              <Badge variant="outline" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{stats.loyaltyMilestones} New</Badge>
             </CardTitle>
             <CardDescription>
               Tier advancement and activity
@@ -141,19 +144,8 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                { client: "James Wilson", action: "Reached Gold tier", detail: "5 completed bookings" },
-                { client: "Maria Garcia", action: "Reached Silver tier", detail: "3 completed bookings" },
-                { client: "Robert Chen", action: "New referral", detail: "Joined via link" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
-                  <div>
-                    <p className="font-medium text-sm">{item.client}</p>
-                    <p className="text-xs text-muted-foreground">{item.action}</p>
-                  </div>
-                  <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{item.detail}</Badge>
-                </div>
-              ))}
+              {/* Mock Loyalty structure replaced with empty state until properly queried */}
+              <p className="text-sm text-muted-foreground">No recent loyalty milestones</p>
             </div>
             <div className="mt-4 pt-3 border-t">
               <Link to="/admin/clients" className="text-sm text-primary hover:underline flex items-center justify-end">
@@ -177,7 +169,7 @@ const AdminDashboard = () => {
       {/* Bottom Row */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <UpcomingSessions />
-        <RecentMessages unreadCount={mockStats.messagesUnread} />
+        <RecentMessages unreadCount={stats.messagesUnread} />
         <QuickActions />
       </div>
     </div>

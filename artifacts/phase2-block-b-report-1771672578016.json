@@ -1,0 +1,29 @@
+{
+  "runId": 1771672578016,
+  "executedAt": "2026-02-21T11:16:19.945Z",
+  "email": "phase2.e2e.1771672578016@gmail.com",
+  "activeLoginEmail": null,
+  "userId": null,
+  "bookingId": null,
+  "passed": false,
+  "checks": [
+    {
+      "name": "REG-01 register",
+      "passed": false,
+      "detail": "email rate limit exceeded",
+      "at": "2026-02-21T11:16:19.229Z"
+    },
+    {
+      "name": "LOG-01 login with newly registered user",
+      "passed": false,
+      "detail": "Invalid login credentials",
+      "at": "2026-02-21T11:16:19.488Z"
+    },
+    {
+      "name": "RUN",
+      "passed": false,
+      "detail": "No confirmed login available. Set VITE_E2E_LOGIN_EMAIL / VITE_E2E_LOGIN_PASSWORD for a confirmed test account.",
+      "at": "2026-02-21T11:16:19.945Z"
+    }
+  ]
+}

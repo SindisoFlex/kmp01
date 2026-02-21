@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { reactivateFrozenAccount } from "@/services/accountLifecycleService";
 import { REACTIVATION_FEE_RAND } from "@/utils/loyaltyUtils";
+import { formatCurrency } from "@/utils/formatting";
 
 const ReactivatePage: React.FC = () => {
     const { user, logout, refreshUser } = useAuth();
@@ -56,7 +57,7 @@ const ReactivatePage: React.FC = () => {
 
                     <div className="bg-muted p-4 rounded-lg flex items-center justify-between">
                         <span className="font-semibold">Reactivation Fee</span>
-                        <span className="text-2xl font-bold text-primary">R{REACTIVATION_FEE_RAND.toFixed(2)}</span>
+                        <span className="text-2xl font-bold text-primary">{formatCurrency(REACTIVATION_FEE_RAND, "ZAR")}</span>
                     </div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">

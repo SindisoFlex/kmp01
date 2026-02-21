@@ -1,9 +1,9 @@
 
 import React, { useState } from "react";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
+import {
+  Card,
+  CardContent,
+  CardHeader,
   CardTitle,
   CardDescription,
   CardFooter
@@ -11,22 +11,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -39,52 +39,12 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { User, UserPlus, Search, X, Check, Edit, Trash2, Eye, UserCheck } from "lucide-react";
+import { useAdminStaff } from "@/hooks/useAdminStaff";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Sample staff data
-const mockStaffMembers = [
-  {
-    id: "staff-1",
-    name: "John Wilson",
-    email: "john@example.com",
-    phone: "+27 12 345 6789",
-    whatsapp: "+27 12 345 6789",
-    role: "Photographer",
-    specialty: "Wedding",
-    joinDate: "2023-11-15",
-    status: "active",
-    clients: 12,
-    activeTasks: 3
-  },
-  {
-    id: "staff-2",
-    name: "Emily Davis",
-    email: "emily@example.com",
-    phone: "+27 23 456 7890",
-    whatsapp: "+27 23 456 7890",
-    role: "Editor",
-    specialty: "Portrait",
-    joinDate: "2024-01-22",
-    status: "active",
-    clients: 8,
-    activeTasks: 5
-  },
-  {
-    id: "staff-3",
-    name: "Michael Chen",
-    email: "michael@example.com",
-    phone: "+27 34 567 8901",
-    whatsapp: "+27 34 567 8901",
-    role: "Assistant",
-    specialty: "Event",
-    joinDate: "2024-02-10",
-    status: "inactive",
-    clients: 5,
-    activeTasks: 0
-  }
-];
-
+// Removed static mockStaffMembers array
 const StaffManagement: React.FC = () => {
-  const [staffList, setStaffList] = useState(mockStaffMembers);
+  const { staffList, isLoading, updateStaff, removeStaff } = useAdminStaff();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
   const [isEditStaffOpen, setIsEditStaffOpen] = useState(false);
@@ -102,7 +62,7 @@ const StaffManagement: React.FC = () => {
   });
 
   // Filter staff based on search query
-  const filteredStaff = staffList.filter(staff => 
+  const filteredStaff = staffList.filter(staff =>
     staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staff.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staff.role.toLowerCase().includes(searchQuery.toLowerCase())
@@ -110,56 +70,60 @@ const StaffManagement: React.FC = () => {
 
   // Handle add new staff
   const handleAddStaff = () => {
-    const staffId = `staff-${Date.now()}`;
-    const newStaffMember = {
-      ...newStaff,
-      id: staffId,
-      joinDate: new Date().toISOString().split('T')[0],
-      clients: 0,
-      activeTasks: 0
-    };
-    
-    setStaffList(prev => [...prev, newStaffMember]);
-    setNewStaff({
-      name: "",
-      email: "",
-      phone: "",
-      whatsapp: "",
-      role: "Photographer",
-      specialty: "Wedding",
-      status: "active"
+    // In actual production, this requires an Edge Function to create Auth user
+    toast({
+      title: "Action required",
+      description: "Staff creation requires Edge Function or direct invite link. (Not fully wired)",
+      variant: "destructive"
     });
     setIsAddStaffOpen(false);
-    
-    toast({
-      title: "Staff member added",
-      description: `${newStaffMember.name} has been added to the team.`,
-    });
   };
 
   // Handle edit staff
-  const handleEditStaff = () => {
-    setStaffList(prev => 
-      prev.map(staff => staff.id === currentStaff.id ? currentStaff : staff)
-    );
-    setIsEditStaffOpen(false);
-    
-    toast({
-      title: "Staff member updated",
-      description: `${currentStaff.name}'s information has been updated.`,
-    });
+  const handleEditStaff = async () => {
+    try {
+      await updateStaff({
+        id: currentStaff.id,
+        name: currentStaff.name,
+        phone: currentStaff.phone,
+        status: currentStaff.status,
+        role: currentStaff.role,
+        specialty: currentStaff.specialty
+      });
+      setIsEditStaffOpen(false);
+
+      toast({
+        title: "Staff member updated",
+        description: `${currentStaff.name}'s information has been updated.`,
+      });
+    } catch (err: any) {
+      toast({ title: "Update Failed", description: err.message, variant: "destructive" });
+    }
   };
 
   // Handle delete staff
-  const handleDeleteStaff = () => {
-    setStaffList(prev => prev.filter(staff => staff.id !== currentStaff.id));
-    setIsDeleteConfirmOpen(false);
-    
-    toast({
-      title: "Staff member removed",
-      description: `${currentStaff.name} has been removed from the team.`,
-    });
+  const handleDeleteStaff = async () => {
+    try {
+      await removeStaff(currentStaff.id);
+      setIsDeleteConfirmOpen(false);
+
+      toast({
+        title: "Staff member removed",
+        description: `${currentStaff.name} has been removed from the team.`,
+      });
+    } catch (err: any) {
+      toast({ title: "Delete Failed", description: err.message, variant: "destructive" });
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center"><Skeleton className="h-10 w-[200px]" /><Skeleton className="h-10 w-[120px]" /></div>
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -168,13 +132,13 @@ const StaffManagement: React.FC = () => {
           <h1 className="text-2xl font-bold tracking-tight">Staff Management</h1>
           <p className="text-muted-foreground">Manage your photography team members</p>
         </div>
-        
+
         <Button onClick={() => setIsAddStaffOpen(true)}>
           <UserPlus className="h-4 w-4 mr-2" />
           Add Staff Member
         </Button>
       </div>
-      
+
       <Card className="card-dashboard">
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -498,7 +462,7 @@ const StaffManagement: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{currentStaff.role} • {currentStaff.specialty}</p>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 pt-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
@@ -527,12 +491,12 @@ const StaffManagement: React.FC = () => {
                   <p>{currentStaff.activeTasks}</p>
                 </div>
               </div>
-              
+
               <div className="pt-4 border-t">
                 <h4 className="text-sm font-medium mb-2">Assigned Clients ({currentStaff.clients})</h4>
                 <p className="text-sm text-muted-foreground">
-                  {currentStaff.clients > 0 
-                    ? "View client assignments in the Client Management section." 
+                  {currentStaff.clients > 0
+                    ? "View client assignments in the Client Management section."
                     : "No clients currently assigned."}
                 </p>
               </div>
@@ -542,7 +506,7 @@ const StaffManagement: React.FC = () => {
             <Button variant="outline" onClick={() => setIsViewStaffOpen(false)}>
               Close
             </Button>
-            <Button 
+            <Button
               onClick={() => {
                 setIsViewStaffOpen(false);
                 setIsEditStaffOpen(true);

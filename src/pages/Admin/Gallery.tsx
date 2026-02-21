@@ -1,10 +1,10 @@
 
 import React, { useState } from "react";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
   CardTitle,
   CardFooter
 } from "@/components/ui/card";
@@ -22,13 +22,13 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from "@/components/ui/dialog";
 import {
   Tabs,
@@ -36,179 +36,25 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { 
-  GalleryHorizontal, 
-  Upload, 
-  Search, 
-  Eye, 
-  Edit, 
-  Trash2, 
-  Image, 
-  Video, 
-  User, 
-  Calendar, 
-  Download, 
+import {
+  GalleryHorizontal,
+  Upload,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
+  Image,
+  Video,
+  User,
+  Calendar,
+  Download,
   Link,
   Plus
 } from "lucide-react";
+import { useAdminGalleries } from "@/hooks/useAdminGalleries";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Sample gallery data
-const mockGalleries = [
-  {
-    id: "gallery-1",
-    title: "Smith Wedding",
-    category: "wedding",
-    description: "Beautiful beach wedding ceremony",
-    client: "Sarah Johnson",
-    clientId: "client-1",
-    date: "2024-04-15",
-    createdAt: "2024-04-17",
-    expirationDate: "2026-04-15",
-    photographer: "John Wilson",
-    photographerId: "staff-1",
-    coverImage: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&auto=format&fit=crop",
-    imageCount: 145,
-    videoCount: 2,
-    views: 32,
-    downloads: 18,
-    type: "private",
-    downloadEnabled: true,
-    featured: true,
-    status: "active"
-  },
-  {
-    id: "gallery-2",
-    title: "Williams Family Session",
-    category: "portrait",
-    description: "Family portrait session at the park",
-    client: "Robert Williams",
-    clientId: "client-4",
-    date: "2024-03-22",
-    createdAt: "2024-03-24", 
-    expirationDate: "2026-03-22",
-    photographer: "Emily Davis",
-    photographerId: "staff-2",
-    coverImage: "https://images.unsplash.com/photo-1581952976147-5a2d15560349?w=800&auto=format&fit=crop",
-    imageCount: 65,
-    videoCount: 0,
-    views: 28,
-    downloads: 12,
-    type: "private",
-    downloadEnabled: true,
-    featured: false,
-    status: "active"
-  },
-  {
-    id: "gallery-3",
-    title: "Brown Corporate Event",
-    category: "corporate",
-    description: "Annual company retreat photos",
-    client: "Amanda Brown",
-    clientId: "client-3",
-    date: "2024-03-10",
-    createdAt: "2024-03-12",
-    expirationDate: "2026-03-10",
-    photographer: "Michael Chen",
-    photographerId: "staff-3",
-    coverImage: "https://images.unsplash.com/photo-1531058020387-3be344556be6?w=800&auto=format&fit=crop",
-    imageCount: 120,
-    videoCount: 1,
-    views: 45,
-    downloads: 22,
-    type: "private",
-    downloadEnabled: true,
-    featured: false,
-    status: "active"
-  },
-  {
-    id: "gallery-4",
-    title: "Portfolio Highlights - Weddings",
-    category: "wedding",
-    description: "Best wedding photography for the website",
-    client: null,
-    clientId: null,
-    date: "2024-02-15",
-    createdAt: "2024-02-15",
-    expirationDate: null,
-    photographer: "John Wilson",
-    photographerId: "staff-1",
-    coverImage: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop",
-    imageCount: 24,
-    videoCount: 1,
-    views: 156,
-    downloads: 0,
-    type: "public",
-    downloadEnabled: false,
-    featured: true,
-    status: "active"
-  },
-  {
-    id: "gallery-5",
-    title: "Portfolio Highlights - Portraits",
-    category: "portrait",
-    description: "Best portrait work for the website",
-    client: null,
-    clientId: null,
-    date: "2024-01-20",
-    createdAt: "2024-01-20",
-    expirationDate: null,
-    photographer: "Emily Davis",
-    photographerId: "staff-2",
-    coverImage: "https://images.unsplash.com/photo-1502773860571-211a597d6e4b?w=800&auto=format&fit=crop",
-    imageCount: 18,
-    videoCount: 0,
-    views: 102,
-    downloads: 0,
-    type: "public",
-    downloadEnabled: false,
-    featured: true,
-    status: "active"
-  },
-  {
-    id: "gallery-6",
-    title: "Portfolio Highlights - Events",
-    category: "event",
-    description: "Best event photography for the website",
-    client: null,
-    clientId: null,
-    date: "2024-01-10",
-    createdAt: "2024-01-10",
-    expirationDate: null,
-    photographer: "Michael Chen",
-    photographerId: "staff-3",
-    coverImage: "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?w=800&auto=format&fit=crop",
-    imageCount: 32,
-    videoCount: 2,
-    views: 89,
-    downloads: 0,
-    type: "public",
-    downloadEnabled: false,
-    featured: true,
-    status: "active"
-  },
-  {
-    id: "gallery-7",
-    title: "Portfolio Highlights - Funeral Services",
-    category: "funeral",
-    description: "Tasteful funeral photography services",
-    client: null,
-    clientId: null,
-    date: "2024-02-28",
-    createdAt: "2024-02-28",
-    expirationDate: null,
-    photographer: "John Wilson",
-    photographerId: "staff-1",
-    coverImage: "https://images.unsplash.com/photo-1586006964955-077c3210e104?w=800&auto=format&fit=crop",
-    imageCount: 15,
-    videoCount: 0,
-    views: 42,
-    downloads: 0,
-    type: "public",
-    downloadEnabled: false,
-    featured: false,
-    status: "active"
-  }
-];
+// Removed static mockGalleries array
 
 // Gallery categories
 const categories = [
@@ -220,32 +66,19 @@ const categories = [
   { value: "commercial", label: "Commercial" }
 ];
 
-// Sample clients for the dropdown
-const clients = [
-  { id: "client-1", name: "Sarah Johnson" },
-  { id: "client-2", name: "David Smith" },
-  { id: "client-3", name: "Amanda Brown" },
-  { id: "client-4", name: "Robert Williams" }
-];
-
-// Sample staff for the dropdown
-const staff = [
-  { id: "staff-1", name: "John Wilson" },
-  { id: "staff-2", name: "Emily Davis" },
-  { id: "staff-3", name: "Michael Chen" }
-];
+// Removed mock clients and staff arrays
 
 const GalleryManagement: React.FC = () => {
-  const [galleries, setGalleries] = useState(mockGalleries);
+  const { galleries, isLoading, clientsList: clients, staffList: staff, createGallery, updateGallery, deleteGallery } = useAdminGalleries();
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
-  
+
   const [isAddGalleryOpen, setIsAddGalleryOpen] = useState(false);
   const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
   const [isDeleteGalleryOpen, setIsDeleteGalleryOpen] = useState(false);
   const [isViewGalleryOpen, setIsViewGalleryOpen] = useState(false);
-  
+
   const [currentGallery, setCurrentGallery] = useState<any>(null);
   const [newGallery, setNewGallery] = useState({
     title: "",
@@ -259,11 +92,11 @@ const GalleryManagement: React.FC = () => {
     featured: false,
     expiresIn: "24" // months
   });
-  
+
   // Get filtered galleries based on active tab, search query, and category filter
   const getFilteredGalleries = () => {
     let filtered = galleries;
-    
+
     // Filter by tab (gallery type)
     if (activeTab === "public") {
       filtered = filtered.filter(gallery => gallery.type === "public");
@@ -272,43 +105,28 @@ const GalleryManagement: React.FC = () => {
     } else if (activeTab === "featured") {
       filtered = filtered.filter(gallery => gallery.featured);
     }
-    
+
     // Filter by category if not "all"
     if (filterCategory !== "all") {
       filtered = filtered.filter(gallery => gallery.category === filterCategory);
     }
-    
+
     // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(gallery => 
-        gallery.title.toLowerCase().includes(query) || 
+      filtered = filtered.filter(gallery =>
+        gallery.title.toLowerCase().includes(query) ||
         gallery.description.toLowerCase().includes(query) ||
         (gallery.client && gallery.client.toLowerCase().includes(query)) ||
         (gallery.photographer && gallery.photographer.toLowerCase().includes(query))
       );
     }
-    
+
     return filtered;
   };
-  
+
   // Handle adding a new gallery
-  const handleAddGallery = () => {
-    const galleryId = `gallery-${Date.now()}`;
-    
-    let clientName = null;
-    if (newGallery.clientId) {
-      const selectedClient = clients.find(c => c.id === newGallery.clientId);
-      clientName = selectedClient ? selectedClient.name : null;
-    }
-    
-    let photographerName = null;
-    if (newGallery.photographerId) {
-      const selectedStaff = staff.find(s => s.id === newGallery.photographerId);
-      photographerName = selectedStaff ? selectedStaff.name : null;
-    }
-    
-    // Calculate expiration date (if applicable)
+  const handleAddGallery = async () => {
     let expirationDate = null;
     if (newGallery.type === "private" && newGallery.expiresIn) {
       const months = parseInt(newGallery.expiresIn);
@@ -316,84 +134,100 @@ const GalleryManagement: React.FC = () => {
       expDate.setMonth(expDate.getMonth() + months);
       expirationDate = expDate.toISOString().split('T')[0];
     }
-    
-    const newGalleryItem = {
-      id: galleryId,
-      title: newGallery.title,
-      category: newGallery.category,
-      description: newGallery.description,
-      client: clientName,
-      clientId: newGallery.clientId || null,
-      date: newGallery.date,
-      createdAt: new Date().toISOString().split('T')[0],
-      expirationDate,
-      photographer: photographerName,
-      photographerId: newGallery.photographerId || null,
-      coverImage: "https://images.unsplash.com/photo-1552334405-4929f2ab35ba?w=800&auto=format&fit=crop",
-      imageCount: 0,
-      videoCount: 0,
-      views: 0,
-      downloads: 0,
-      type: newGallery.type,
-      downloadEnabled: newGallery.downloadEnabled,
-      featured: newGallery.featured,
-      status: "active"
-    };
-    
-    setGalleries([...galleries, newGalleryItem]);
-    setIsAddGalleryOpen(false);
-    
-    // Reset form
-    setNewGallery({
-      title: "",
-      category: "wedding",
-      description: "",
-      clientId: "",
-      date: new Date().toISOString().split('T')[0],
-      photographerId: "",
-      type: "private",
-      downloadEnabled: true,
-      featured: false,
-      expiresIn: "24"
-    });
-    
-    toast({
-      title: "Gallery Created",
-      description: `"${newGalleryItem.title}" gallery has been created successfully.`,
-    });
+
+    try {
+      await createGallery({
+        title: newGallery.title,
+        category: newGallery.category,
+        description: newGallery.description,
+        clientId: newGallery.clientId || null,
+        date: newGallery.date,
+        photographerId: newGallery.photographerId || null,
+        type: newGallery.type,
+        downloadEnabled: newGallery.downloadEnabled,
+        featured: newGallery.featured,
+        expirationDate
+      });
+
+      setIsAddGalleryOpen(false);
+
+      // Reset form
+      setNewGallery({
+        title: "",
+        category: "wedding",
+        description: "",
+        clientId: "",
+        date: new Date().toISOString().split('T')[0],
+        photographerId: "",
+        type: "private",
+        downloadEnabled: true,
+        featured: false,
+        expiresIn: "24"
+      });
+
+      toast({
+        title: "Gallery Created",
+        description: `"${newGallery.title}" gallery has been created successfully.`,
+      });
+    } catch (err: any) {
+      toast({ title: "Failed to create gallery", description: err.message, variant: "destructive" });
+    }
   };
-  
+
   // Handle edit gallery
-  const handleEditGallery = () => {
-    const updatedGalleries = galleries.map(gallery => {
-      if (gallery.id === currentGallery.id) {
-        return currentGallery;
-      }
-      return gallery;
-    });
-    
-    setGalleries(updatedGalleries);
-    setIsEditGalleryOpen(false);
-    
-    toast({
-      title: "Gallery Updated",
-      description: `"${currentGallery.title}" gallery has been updated successfully.`,
-    });
+  const handleEditGallery = async () => {
+    try {
+      await updateGallery({
+        id: currentGallery.id,
+        title: currentGallery.title,
+        category: currentGallery.category,
+        description: currentGallery.description,
+        clientId: currentGallery.clientId,
+        date: currentGallery.date,
+        photographerId: currentGallery.photographerId,
+        type: currentGallery.type,
+        downloadEnabled: currentGallery.downloadEnabled,
+        featured: currentGallery.featured,
+        expirationDate: currentGallery.expirationDate,
+        status: currentGallery.status
+      });
+      setIsEditGalleryOpen(false);
+
+      toast({
+        title: "Gallery Updated",
+        description: `"${currentGallery.title}" gallery has been updated successfully.`,
+      });
+    } catch (err: any) {
+      toast({ title: "Update Failed", description: err.message, variant: "destructive" });
+    }
   };
-  
+
   // Handle delete gallery
-  const handleDeleteGallery = () => {
-    setGalleries(galleries.filter(gallery => gallery.id !== currentGallery.id));
-    setIsDeleteGalleryOpen(false);
-    
-    toast({
-      title: "Gallery Deleted",
-      description: `"${currentGallery.title}" gallery has been deleted.`,
-    });
+  const handleDeleteGallery = async () => {
+    try {
+      await deleteGallery(currentGallery.id);
+      setIsDeleteGalleryOpen(false);
+
+      toast({
+        title: "Gallery Deleted",
+        description: `"${currentGallery.title}" gallery has been deleted.`,
+      });
+    } catch (err: any) {
+      toast({ title: "Delete Failed", description: err.message, variant: "destructive" });
+    }
   };
-  
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center"><Skeleton className="h-10 w-[200px]" /><Skeleton className="h-10 w-[120px]" /></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><Skeleton className="h-[300px]" /><Skeleton className="h-[300px]" /><Skeleton className="h-[300px]" /></div>
+      </div>
+    );
+  }
+
   const filteredGalleries = getFilteredGalleries();
-  
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -401,18 +235,18 @@ const GalleryManagement: React.FC = () => {
           <h1 className="text-2xl font-bold tracking-tight">Gallery Management</h1>
           <p className="text-muted-foreground">Manage public and private photo galleries</p>
         </div>
-        
+
         <Button onClick={() => setIsAddGalleryOpen(true)}>
           <Upload className="h-4 w-4 mr-2" />
           Create New Gallery
         </Button>
       </div>
-      
+
       <Card className="card-dashboard">
         <CardHeader className="space-y-0 pb-2">
           <CardTitle>Photo Galleries</CardTitle>
         </CardHeader>
-        
+
         <div className="px-6">
           <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-full">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
@@ -422,7 +256,7 @@ const GalleryManagement: React.FC = () => {
                 <TabsTrigger value="private">Private</TabsTrigger>
                 <TabsTrigger value="featured">Featured</TabsTrigger>
               </TabsList>
-              
+
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <div className="relative w-full sm:w-auto">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -433,8 +267,8 @@ const GalleryManagement: React.FC = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Select 
-                  value={filterCategory} 
+                <Select
+                  value={filterCategory}
                   onValueChange={setFilterCategory}
                 >
                   <SelectTrigger className="w-full sm:w-[150px]">
@@ -449,7 +283,7 @@ const GalleryManagement: React.FC = () => {
                 </Select>
               </div>
             </div>
-            
+
             <TabsContent value="all" className="m-0">
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {filteredGalleries.map(gallery => (
@@ -470,7 +304,7 @@ const GalleryManagement: React.FC = () => {
                     }}
                   />
                 ))}
-                
+
                 {filteredGalleries.length === 0 && (
                   <div className="col-span-full p-6 text-center border rounded-md">
                     <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
@@ -478,13 +312,13 @@ const GalleryManagement: React.FC = () => {
                     </div>
                     <h3 className="text-lg font-medium mb-1">No Galleries Found</h3>
                     <p className="text-sm text-muted-foreground">
-                      {searchQuery || filterCategory !== "all" 
+                      {searchQuery || filterCategory !== "all"
                         ? "Try changing your search terms or filters."
                         : "Get started by creating your first gallery."}
                     </p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-4" 
+                    <Button
+                      variant="outline"
+                      className="mt-4"
                       onClick={() => setIsAddGalleryOpen(true)}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -494,7 +328,7 @@ const GalleryManagement: React.FC = () => {
                 )}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="public" className="m-0">
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {filteredGalleries.map(gallery => (
@@ -515,7 +349,7 @@ const GalleryManagement: React.FC = () => {
                     }}
                   />
                 ))}
-                
+
                 {filteredGalleries.length === 0 && (
                   <div className="col-span-full p-6 text-center border rounded-md">
                     <p className="text-muted-foreground">No public galleries found.</p>
@@ -523,7 +357,7 @@ const GalleryManagement: React.FC = () => {
                 )}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="private" className="m-0">
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {filteredGalleries.map(gallery => (
@@ -544,7 +378,7 @@ const GalleryManagement: React.FC = () => {
                     }}
                   />
                 ))}
-                
+
                 {filteredGalleries.length === 0 && (
                   <div className="col-span-full p-6 text-center border rounded-md">
                     <p className="text-muted-foreground">No private galleries found.</p>
@@ -552,7 +386,7 @@ const GalleryManagement: React.FC = () => {
                 )}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="featured" className="m-0">
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {filteredGalleries.map(gallery => (
@@ -573,7 +407,7 @@ const GalleryManagement: React.FC = () => {
                     }}
                   />
                 ))}
-                
+
                 {filteredGalleries.length === 0 && (
                   <div className="col-span-full p-6 text-center border rounded-md">
                     <p className="text-muted-foreground">No featured galleries found.</p>
@@ -583,14 +417,14 @@ const GalleryManagement: React.FC = () => {
             </TabsContent>
           </Tabs>
         </div>
-        
+
         <CardFooter className="border-t mt-4">
           <p className="text-sm text-muted-foreground">
             Showing {filteredGalleries.length} of {galleries.length} galleries
           </p>
         </CardFooter>
       </Card>
-      
+
       {/* Add Gallery Dialog */}
       <Dialog open={isAddGalleryOpen} onOpenChange={setIsAddGalleryOpen}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -612,7 +446,7 @@ const GalleryManagement: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
@@ -646,7 +480,7 @@ const GalleryManagement: React.FC = () => {
                 </Select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
@@ -657,7 +491,7 @@ const GalleryManagement: React.FC = () => {
                 rows={3}
               />
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="date">Session Date</Label>
@@ -685,7 +519,7 @@ const GalleryManagement: React.FC = () => {
                 </Select>
               </div>
             </div>
-            
+
             {newGallery.type === "private" && (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -723,7 +557,7 @@ const GalleryManagement: React.FC = () => {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="download"
@@ -734,7 +568,7 @@ const GalleryManagement: React.FC = () => {
                 </div>
               </>
             )}
-            
+
             {newGallery.type === "public" && (
               <div className="flex items-center space-x-2">
                 <Switch
@@ -745,7 +579,7 @@ const GalleryManagement: React.FC = () => {
                 <Label htmlFor="featured">Feature this gallery on the website</Label>
               </div>
             )}
-            
+
             <div className="mt-4 border rounded-md p-4 bg-muted/50">
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -762,7 +596,7 @@ const GalleryManagement: React.FC = () => {
             <Button variant="outline" onClick={() => setIsAddGalleryOpen(false)}>
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleAddGallery}
               disabled={!newGallery.title || (!newGallery.photographerId && newGallery.type === "private")}
             >
@@ -771,7 +605,7 @@ const GalleryManagement: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Edit Gallery Dialog */}
       <Dialog open={isEditGalleryOpen} onOpenChange={setIsEditGalleryOpen}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -793,7 +627,7 @@ const GalleryManagement: React.FC = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-category">Category</Label>
@@ -827,7 +661,7 @@ const GalleryManagement: React.FC = () => {
                   </Select>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="edit-description">Description</Label>
                 <Textarea
@@ -837,7 +671,7 @@ const GalleryManagement: React.FC = () => {
                   rows={3}
                 />
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 {currentGallery.type === "private" ? (
                   <Switch
@@ -853,8 +687,8 @@ const GalleryManagement: React.FC = () => {
                   />
                 )}
                 <Label htmlFor={currentGallery.type === "private" ? "edit-download" : "edit-featured"}>
-                  {currentGallery.type === "private" 
-                    ? "Enable downloads for this gallery" 
+                  {currentGallery.type === "private"
+                    ? "Enable downloads for this gallery"
                     : "Feature this gallery on the website"}
                 </Label>
               </div>
@@ -870,7 +704,7 @@ const GalleryManagement: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* View Gallery Dialog */}
       <Dialog open={isViewGalleryOpen} onOpenChange={setIsViewGalleryOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
@@ -880,7 +714,7 @@ const GalleryManagement: React.FC = () => {
           {currentGallery && (
             <div className="space-y-6">
               <div className="relative rounded-md overflow-hidden h-40 bg-muted">
-                <img 
+                <img
                   src={currentGallery.coverImage}
                   alt={currentGallery.title}
                   className="w-full h-full object-cover"
@@ -907,12 +741,12 @@ const GalleryManagement: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-medium">{currentGallery.title}</h3>
                 <p className="text-sm text-muted-foreground">{currentGallery.description}</p>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -944,8 +778,8 @@ const GalleryManagement: React.FC = () => {
                       <div>
                         <p className="text-sm font-medium">Downloads</p>
                         <p className="text-sm text-muted-foreground">
-                          {currentGallery.downloadEnabled 
-                            ? `${currentGallery.downloads} downloads` 
+                          {currentGallery.downloadEnabled
+                            ? `${currentGallery.downloads} downloads`
                             : "Downloads disabled"}
                         </p>
                       </div>
@@ -971,7 +805,7 @@ const GalleryManagement: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="pt-4 border-t">
                 <div className="flex justify-between mb-4">
                   <h4 className="text-sm font-medium">Media Content</h4>
@@ -1011,7 +845,7 @@ const GalleryManagement: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteGalleryOpen} onOpenChange={setIsDeleteGalleryOpen}>
         <DialogContent>

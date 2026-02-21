@@ -170,7 +170,11 @@ const BookingWizard = () => {
           onUpdate={(details) => updateBookingData(details)}
         />;
       default:
-        return null;
+        return (
+          <div className="py-8 text-center text-muted-foreground">
+            This step is unavailable. Please go back and try again.
+          </div>
+        );
     }
   };
 

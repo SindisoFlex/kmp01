@@ -1,8 +1,25 @@
 import { supabase } from "../lib/supabase";
 import { User, UserRole } from "../types/auth";
 import { determineTier } from "../utils/loyaltyUtils";
+import { markReferralRegisteredForNewUser } from "./referralService";
 
-const mapProfileToUser = (profile: any): User => {
+type ProfileRow = {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  whatsapp?: string | null;
+  bio?: string | null;
+  is_business_account?: boolean | null;
+  membership_tier?: User["membershipTier"] | null;
+  individual_completed_bookings?: number | null;
+  avatar?: string | null;
+  role?: string | null;
+  account_status?: string | null;
+  last_activity_at?: string | null;
+};
+
+const mapProfileToUser = (profile: ProfileRow): User => {
   const rawAccountStatus = String(profile.account_status || "active").toLowerCase();
   const accountStatus = rawAccountStatus === "inactive" ? "frozen" : rawAccountStatus;
 
@@ -131,6 +148,12 @@ export const registerUser = async (
     throw new Error("Registration failed: No user returned.");
   }
 
+  try {
+    await markReferralRegisteredForNewUser(data.user.id, email);
+  } catch (error) {
+    console.error("Referral registration mapping failed:", error);
+  }
+
   if (!data.session) {
     return { needsConfirmation: true };
   }
@@ -167,8 +190,9 @@ export const socialLoginUser = async (provider: "google" | "facebook" | "whatsap
     throw new Error("WhatsApp login is currently disabled. Please use Google or Facebook.");
   }
 
+  const oauthProvider: "google" | "facebook" = provider;
   const { error } = await supabase.auth.signInWithOAuth({
-    provider: provider as any,
+    provider: oauthProvider,
     options: {
       redirectTo: `${window.location.origin}/dashboard`,
     },
@@ -200,7 +224,7 @@ export const logoutUser = async () => {
 };
 
 export const updateUserProfile = async (userId: string, data: Partial<User>): Promise<void> => {
-  const dbData: any = {};
+  const dbData: Record<string, unknown> = {};
   if (data.name !== undefined) dbData.name = data.name;
   if (data.phone !== undefined) dbData.phone = data.phone;
   if (data.whatsapp !== undefined) dbData.whatsapp = data.whatsapp;
