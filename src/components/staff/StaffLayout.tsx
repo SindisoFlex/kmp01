@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Calendar,
@@ -96,7 +96,8 @@ const StaffLayout: React.FC = () => {
         {/* Staff header */}
         <div className={`px-4 py-5 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
           {!collapsed && (
-            <Link to="/staff" className="flex items-center">
+            <Link to="/staff" className="flex items-center gap-2">
+              <img src="/src/components/1kmp.svg" alt="KMP Logo" className="h-8 w-auto" />
               <span className="text-xl font-bold tracking-tight">
                 Kasilam Media production <span className="text-sm font-normal text-primary ml-1">Staff</span>
               </span>
@@ -104,7 +105,7 @@ const StaffLayout: React.FC = () => {
           )}
           {collapsed && (
             <Link to="/staff" className="flex items-center justify-center">
-              <span className="text-xl font-bold text-primary">KMP</span>
+              <img src="/src/components/1kmp.svg" alt="KMP Logo" className="h-8 w-auto" />
             </Link>
           )}
           <Button
@@ -149,8 +150,8 @@ const StaffLayout: React.FC = () => {
                   key={item.name}
                   to={item.href}
                   className={`group flex items-center ${collapsed ? 'justify-center' : ''} px-2 py-2 text-sm font-medium rounded-md ${isActive
-                      ? "bg-primary text-white"
-                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-primary text-white"
+                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
                   onClick={() => setSidebarOpen(false)}
                 >

@@ -11,7 +11,8 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and About */}
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center gap-2">
+              <img src="/src/components/1kmp.svg" alt="KMP Logo" className="h-10 w-auto" />
               <span className="text-xl font-bold tracking-tight">
                 Kasilam Media production
               </span>

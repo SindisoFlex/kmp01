@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PaymentMethod, processPayment } from "@/utils/paymentUtils";
 import { toast } from "@/hooks/use-toast";
 import { CreditCard, Landmark, BanknoteIcon } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PaymentFormProps {
   invoiceId: string;
@@ -23,7 +23,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
   const [isProcessing, setIsProcessing] = useState(false);
   const { user } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user) {
@@ -41,7 +41,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ invoiceId, amount, onPaymentC
     // For EFT and cash, we just process the payment directly with a reference
 
     try {
-      const payment = processPayment(invoiceId, paymentMethod, reference || undefined);
+      const payment = await processPayment(invoiceId, paymentMethod, reference || undefined);
       if (payment) {
         toast({
           title: "Payment Successful",

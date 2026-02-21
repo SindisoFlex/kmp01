@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Card,
@@ -16,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QrCode, Share2, Clipboard, Check, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ReferralSystem: React.FC = () => {
   const [copied, setCopied] = useState(false);
@@ -42,7 +43,6 @@ const ReferralSystem: React.FC = () => {
 
   const handleEmailInvite = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send the email through a backend service
     toast({
       title: "Invitation Sent!",
       description: `Referral invitation sent to ${email}`,
@@ -57,7 +57,7 @@ const ReferralSystem: React.FC = () => {
       try {
         await navigator.share({
           title: 'Join Kasilam Media production Photography',
-          text: `Check out Kasilam Media production Photography! Use my referral code ${referralCode} for special benefits.`,
+          text: `Check out Kasilam Media production Photography! Use my referral code ${referralCode} for exclusive membership benefits.`,
           url: referralUrl,
         });
       } catch (err) {
@@ -71,9 +71,9 @@ const ReferralSystem: React.FC = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Refer Friends & Earn Points</CardTitle>
+        <CardTitle>Refer Friends & Unlock Tiers</CardTitle>
         <CardDescription>
-          Invite your friends and family to Kasilam Media production Photography and earn 10 points for each successful referral.
+          Invite your friends and family to Kasilam Media production and level up your membership status together.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -150,7 +150,6 @@ const ReferralSystem: React.FC = () => {
           <TabsContent value="qr">
             <div className="flex flex-col items-center justify-center p-4">
               <div className="bg-white p-4 rounded-lg shadow-sm">
-                {/* In a real app, this would be a dynamically generated QR code */}
                 <QrCode className="h-48 w-48 text-primary" />
               </div>
               <p className="mt-4 text-sm text-muted-foreground text-center">
@@ -165,7 +164,7 @@ const ReferralSystem: React.FC = () => {
           <ol className="text-sm space-y-1 text-muted-foreground list-decimal list-inside">
             <li>Share your unique referral link with friends</li>
             <li>When they sign up using your link, they'll be connected to your account</li>
-            <li>Once they complete their first booking, you'll receive 10 points</li>
+            <li>Both you and your friend unlock prioritized membership status tracking</li>
             <li>There's no limit to how many friends you can refer!</li>
           </ol>
         </div>

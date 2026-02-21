@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { Link, Outlet, useLocation, Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import DashboardBackground from "@/components/dashboard/theme/DashboardBackground";
 import {
@@ -41,7 +41,7 @@ const DashboardLayout: React.FC = () => {
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "My Bookings", href: "/dashboard/bookings", icon: Calendar },
     { name: "My Gallery", href: "/dashboard/gallery", icon: GalleryHorizontal },
-    { name: "My Points", href: "/dashboard/points", icon: Award, badge: user?.points },
+
     { name: "My Profile", href: "/dashboard/profile", icon: User },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
     { name: "Theme", href: "/dashboard/theme", icon: Palette },
@@ -50,12 +50,19 @@ const DashboardLayout: React.FC = () => {
   const quickActions = [
     { name: "New Booking", href: "/dashboard/booking/new", icon: Calendar },
     { name: "Refer Friend", href: "/dashboard/refer", icon: QrCode },
-    { name: "Download Photos", href: "/dashboard/download", icon: Download },
+    { name: "Download Photos", href: "/dashboard/gallery", icon: Download },
   ];
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
+  if (user?.accountStatus === "frozen") {
+    if (location.pathname !== "/dashboard/reactivate") {
+      return <Navigate to="/dashboard/reactivate" replace />;
+    }
+    return <Outlet />;
+  }
 
   return (
     <DashboardBackground>
@@ -90,7 +97,8 @@ const DashboardLayout: React.FC = () => {
           {/* Sidebar header */}
           <div className={`px-4 py-5 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
             {!collapsed && (
-              <Link to="/" className="flex items-center">
+              <Link to="/" className="flex items-center gap-2">
+                <img src="/src/components/1kmp.svg" alt="KMP Logo" className="h-8 w-auto" />
                 <span className="text-xl font-bold tracking-tight">
                   Kasilam Media production
                 </span>
@@ -98,7 +106,7 @@ const DashboardLayout: React.FC = () => {
             )}
             {collapsed && (
               <Link to="/" className="flex items-center justify-center">
-                <span className="text-xl font-bold text-primary">KMP</span>
+                <img src="/src/components/1kmp.svg" alt="KMP Logo" className="h-8 w-auto" />
               </Link>
             )}
             <Button
@@ -123,6 +131,11 @@ const DashboardLayout: React.FC = () => {
                 <div className="ml-3">
                   <p className="text-sm font-medium">{user?.name || 'User'}</p>
                   <p className="text-xs text-muted-foreground">{user?.membershipTier || 'Free'} Tier</p>
+                  {user?.loyaltyState && (
+                    <p className="text-xs text-primary capitalize">
+                      Loyalty: {user.loyaltyState.individual_tier === "none" ? "free" : user.loyaltyState.individual_tier}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -138,8 +151,8 @@ const DashboardLayout: React.FC = () => {
                     key={item.name}
                     to={item.href}
                     className={`group flex items-center ${collapsed ? 'justify-center' : ''} px-2 py-2 text-sm font-medium rounded-md ${isActive
-                        ? "bg-primary text-white"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-primary text-white"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
                     onClick={() => setSidebarOpen(false)}
                   >
@@ -149,12 +162,6 @@ const DashboardLayout: React.FC = () => {
                     />
                     {!collapsed && (
                       <span className="flex-1">{item.name}</span>
-                    )}
-                    {!collapsed && item.badge && (
-                      <span className={`inline-block py-0.5 px-2 text-xs rounded-full ${isActive ? "bg-white/20 text-white" : "bg-primary/20 text-primary"
-                        }`}>
-                        {item.badge}
-                      </span>
                     )}
                   </Link>
                 );

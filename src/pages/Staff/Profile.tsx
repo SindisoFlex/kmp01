@@ -2,11 +2,11 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserCheck } from "lucide-react";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 
 const StaffProfile = () => {
   const { user } = useAuth();
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

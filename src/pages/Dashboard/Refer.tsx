@@ -9,7 +9,7 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { Copy, Mail, Share2, Trophy, Users } from "lucide-react";
 
@@ -25,7 +25,7 @@ const ReferralPage: React.FC = () => {
     total: 3,
     pending: 1,
     completed: 2,
-    points: 100
+    tierProgress: "40%"
   };
 
   const copyToClipboard = () => {
@@ -63,7 +63,7 @@ const ReferralPage: React.FC = () => {
             <Users className="h-5 w-5 text-primary" />
             <CardTitle>Your Referral Code</CardTitle>
           </div>
-          <CardDescription>Share this code with friends and earn 50 points for each successful referral.</CardDescription>
+          <CardDescription>Share this code with friends and advance your loyalty tier for each successful referral.</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -104,7 +104,7 @@ const ReferralPage: React.FC = () => {
             <Trophy className="h-5 w-5 text-primary" />
             <CardTitle>Your Referral Stats</CardTitle>
           </div>
-          <CardDescription>Track your referral progress and rewards.</CardDescription>
+          <CardDescription>Track your referral progress and tier boosts.</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -114,8 +114,8 @@ const ReferralPage: React.FC = () => {
               <p className="text-2xl font-bold">{referralStats.total}</p>
             </div>
             <div className="border rounded-lg p-4 text-center">
-              <p className="text-muted-foreground text-sm">Points Earned</p>
-              <p className="text-2xl font-bold">{referralStats.points}</p>
+              <p className="text-muted-foreground text-sm">Tier Progress</p>
+              <p className="text-2xl font-bold">{referralStats.tierProgress}</p>
             </div>
             <div className="border rounded-lg p-4 text-center">
               <p className="text-muted-foreground text-sm">Pending</p>

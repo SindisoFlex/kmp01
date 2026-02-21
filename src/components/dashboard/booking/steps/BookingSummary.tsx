@@ -2,6 +2,8 @@
 import React from "react";
 import { Camera, Video, Globe, Brain, Megaphone, Printer, CalendarDays, Clock, MapPin, FileText, Package } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
+import { loyaltyConfig } from "@/utils/loyaltyUtils";
 
 interface BookingSummaryProps {
   bookingData: {
@@ -15,6 +17,15 @@ interface BookingSummaryProps {
     attachments: File[];
     extras: string[];
   };
+  priceBreakdown: {
+    subtotal: number;
+    tierDiscountAmount: number;
+    staffDiscountAmount: number;
+    amountBeforeVat: number;
+    vatAmount: number;
+    totalAmount: number;
+  };
+  onUpdate?: (data: any) => void;
 }
 
 // Mapping for service names and icons
@@ -100,28 +111,29 @@ const extrasMappings: Record<string, string> = {
   delivery: "Delivery Service",
 };
 
-const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
+const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData, priceBreakdown, onUpdate }) => {
+  const { user } = useAuth();
   // Get service icon and name
   const service = serviceInfo[bookingData.service as keyof typeof serviceInfo] || { name: "Service", icon: Package };
   const ServiceIcon = service.icon;
-  
+
   // Get category name
-  const categoryName = bookingData.category && bookingData.service 
-    ? categoryMappings[bookingData.service]?.[bookingData.category] 
+  const categoryName = bookingData.category && bookingData.service
+    ? categoryMappings[bookingData.service]?.[bookingData.category]
     : "Unknown Category";
-  
+
   // Format date
   const formatDate = (date?: Date) => {
     if (!date) return "Not specified";
     return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   };
-  
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         Please review your booking details before submitting.
       </p>
-      
+
       <Card>
         <CardContent className="p-6 space-y-6">
           {/* Service & Category */}
@@ -139,7 +151,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
               </div>
             </div>
           </div>
-          
+
           {/* Date and Time */}
           <div>
             <h3 className="font-semibold text-lg mb-2">Schedule</h3>
@@ -153,7 +165,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
                   <p className="text-sm text-muted-foreground">{formatDate(bookingData.date)}</p>
                 </div>
               </div>
-              
+
               {(bookingData.startTime || bookingData.endTime) && (
                 <div className="flex items-start space-x-3">
                   <div className="bg-primary/10 p-2 rounded-full mt-1">
@@ -169,7 +181,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
                   </div>
                 </div>
               )}
-              
+
               {bookingData.location && (
                 <div className="flex items-start space-x-3">
                   <div className="bg-primary/10 p-2 rounded-full mt-1">
@@ -183,7 +195,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
               )}
             </div>
           </div>
-          
+
           {/* Description */}
           {bookingData.description && (
             <div>
@@ -199,7 +211,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
               </div>
             </div>
           )}
-          
+
           {/* Attachments */}
           {bookingData.attachments.length > 0 && (
             <div>
@@ -213,7 +225,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
               </ul>
             </div>
           )}
-          
+
           {/* Selected extras */}
           {bookingData.extras.length > 0 && (
             <div>
@@ -221,16 +233,62 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({ bookingData }) => {
               <ul className="space-y-1">
                 {bookingData.extras.map((extraId) => (
                   <li key={extraId} className="text-sm flex items-center">
-                    <span className="text-primary mr-2">✓</span>
+                    <span className="text-primary mr-2">*</span>
                     {extrasMappings[extraId] || extraId}
                   </li>
                 ))}
               </ul>
             </div>
           )}
+
+          <div className="border-t pt-6 space-y-4">
+            <h3 className="font-semibold text-lg">Financial Summary</h3>
+
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Subtotal</span>
+                <span>R{priceBreakdown.subtotal.toFixed(2)}</span>
+              </div>
+
+              {priceBreakdown.tierDiscountAmount > 0 && (
+                <div className="flex justify-between text-sm text-primary font-medium">
+                  <span>Loyalty Discount ({user?.membershipTier || 'free'})</span>
+                  <span>-R{priceBreakdown.tierDiscountAmount.toFixed(2)}</span>
+                </div>
+              )}
+
+              {priceBreakdown.staffDiscountAmount > 0 && (
+                <div className="flex justify-between text-sm text-green-600 font-medium">
+                  <span>Staff Discount (15%)</span>
+                  <span>-R{priceBreakdown.staffDiscountAmount.toFixed(2)}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between text-sm border-t pt-2">
+                <span>Total (Excl. VAT)</span>
+                <span>R{priceBreakdown.amountBeforeVat.toFixed(2)}</span>
+              </div>
+
+              <div className="flex justify-between text-sm">
+                <span>VAT (15%)</span>
+                <span>R{priceBreakdown.vatAmount.toFixed(2)}</span>
+              </div>
+
+              <div className="flex justify-between text-lg font-bold pt-2 border-t mt-4">
+                <span>Grand Total</span>
+                <span className="text-primary">R{priceBreakdown.totalAmount.toFixed(2)}</span>
+              </div>
+
+              <div className="bg-primary/5 p-3 rounded-md mt-4 border border-primary/10 text-center">
+                <div className="text-xs text-primary font-medium">
+                  Taxes calculated at 15% VAT rate.
+                </div>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
-      
+
       <div className="border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-900 p-4 rounded-md">
         <p className="text-sm text-yellow-800 dark:text-yellow-200">
           Once submitted, our team will review your booking and contact you with confirmation details and pricing.

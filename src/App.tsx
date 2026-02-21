@@ -13,6 +13,7 @@ import Services from "./pages/Services";
 import Portfolio from "./pages/Portfolio";
 import Membership from "./pages/Membership";
 import Contact from "./pages/Contact";
+import ResetPassword from "./pages/Auth/ResetPassword";
 import NotFound from "./pages/NotFound";
 import AIChat from "./components/ai/AIChat";
 
@@ -22,7 +23,7 @@ import DashboardIndex from "./pages/Dashboard/Index";
 import DashboardBookings from "./pages/Dashboard/Bookings";
 import BookingWizardPage from "./pages/Dashboard/BookingWizard";
 import DashboardGallery from "./pages/Dashboard/Gallery";
-import PointsDashboard from "./pages/Dashboard/Points";
+import ReactivatePage from "./pages/Dashboard/Reactivate";
 import UserProfile from "./pages/Dashboard/Profile";
 import UserSettings from "./pages/Dashboard/Settings";
 import ReferralPage from "./pages/Dashboard/Refer";
@@ -69,7 +70,7 @@ const queryClient = new QueryClient({
 const App = () => {
   // Preload essential resources
   usePreloadEssentials();
-  
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -86,11 +87,12 @@ const App = () => {
                 <Route path="/portfolio" element={<Portfolio />} />
                 <Route path="/membership" element={<Membership />} />
                 <Route path="/contact" element={<Contact />} />
-                
+
                 {/* Authentication Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/staff/login" element={<StaffLogin />} />
-                
+                <Route path="/auth/reset-password" element={<ResetPassword />} />
+
                 {/* Client Dashboard Routes */}
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<DashboardIndex />} />
@@ -98,7 +100,7 @@ const App = () => {
                   <Route path="booking/new" element={<BookingWizardPage />} />
                   <Route path="gallery" element={<DashboardGallery />} />
                   <Route path="gallery/:galleryId" element={<DashboardGallery />} />
-                  <Route path="points" element={<PointsDashboard />} />
+                  <Route path="reactivate" element={<ReactivatePage />} />
                   <Route path="profile" element={<UserProfile />} />
                   <Route path="settings" element={<UserSettings />} />
                   <Route path="refer" element={<ReferralPage />} />
@@ -107,7 +109,7 @@ const App = () => {
                   <Route path="invoices/:invoiceId" element={<InvoiceDetailPage />} />
                   <Route path="theme" element={<ThemeSettings />} />
                 </Route>
-                
+
                 {/* Admin Dashboard Routes - Protected */}
                 <Route path="/admin" element={
                   <RoleGuard allowedRoles={["admin"]} redirectTo="/admin/login">
@@ -122,7 +124,7 @@ const App = () => {
                   <Route path="gallery" element={<AdminGallery />} />
                   <Route path="messages" element={<AdminMessages />} />
                 </Route>
-                
+
                 {/* Staff Dashboard Routes - Protected */}
                 <Route path="/staff" element={
                   <RoleGuard allowedRoles={["staff"]} redirectTo="/staff/login">
@@ -138,11 +140,11 @@ const App = () => {
                   <Route path="profile" element={<StaffProfile />} />
                   <Route path="settings" element={<StaffSettings />} />
                 </Route>
-                
+
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              
+
               {/* AI Chat Assistant - Available on all pages */}
               <AIChat />
             </BrowserRouter>

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import StatsSummary from "@/components/admin/dashboard/StatsSummary";
 import ActivityList from "@/components/admin/dashboard/ActivityList";
@@ -10,7 +10,7 @@ import RecentMessages from "@/components/admin/dashboard/RecentMessages";
 import QuickActions from "@/components/admin/dashboard/QuickActions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarCheck, ArrowUpRight, Users, UserCheck, Bell, Calendar } from "lucide-react";
+import { CalendarCheck, ArrowUpRight, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -20,7 +20,7 @@ const mockStats = {
   totalStaff: 8,
   activeBookings: 28,
   completedBookings: 1240,
-  totalRevenue: "$24,320",
+  totalRevenue: "R24,320",
   newClientsThisMonth: 42,
   messagesUnread: 5,
   pendingApprovals: 7,
@@ -122,7 +122,7 @@ const AdminDashboard = () => {
               ))}
             </div>
             <div className="mt-4 pt-3 border-t">
-              <Link to="/admin/calendar" className="text-sm text-primary hover:underline flex items-center justify-end">
+              <Link to="/admin/bookings" className="text-sm text-primary hover:underline flex items-center justify-end">
                 Full schedule <ArrowUpRight className="ml-1 h-3 w-3" />
               </Link>
             </div>
@@ -136,28 +136,28 @@ const AdminDashboard = () => {
               <Badge variant="outline" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{mockStats.loyaltyMilestones} New</Badge>
             </CardTitle>
             <CardDescription>
-              Points and referral activity
+              Tier advancement and activity
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {[
-                { client: "James Wilson", action: "Reached Gold tier", points: "5,000 pts" },
-                { client: "Maria Garcia", action: "New referral", points: "+500 pts" },
-                { client: "Robert Chen", action: "Redeemed reward", points: "-2,500 pts" },
+                { client: "James Wilson", action: "Reached Gold tier", detail: "5 completed bookings" },
+                { client: "Maria Garcia", action: "Reached Silver tier", detail: "3 completed bookings" },
+                { client: "Robert Chen", action: "New referral", detail: "Joined via link" },
               ].map((item, i) => (
                 <div key={i} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
                   <div>
                     <p className="font-medium text-sm">{item.client}</p>
                     <p className="text-xs text-muted-foreground">{item.action}</p>
                   </div>
-                  <Badge variant={i === 2 ? "destructive" : "default"} className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{item.points}</Badge>
+                  <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">{item.detail}</Badge>
                 </div>
               ))}
             </div>
             <div className="mt-4 pt-3 border-t">
-              <Link to="/admin/loyalty" className="text-sm text-primary hover:underline flex items-center justify-end">
-                Manage loyalty program <ArrowUpRight className="ml-1 h-3 w-3" />
+              <Link to="/admin/clients" className="text-sm text-primary hover:underline flex items-center justify-end">
+                Manage clients <ArrowUpRight className="ml-1 h-3 w-3" />
               </Link>
             </div>
           </CardContent>

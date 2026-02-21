@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import AdminLoginForm from "@/components/auth/AdminLoginForm";
 import PageLayout from "@/components/layout/PageLayout";

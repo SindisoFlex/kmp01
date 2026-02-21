@@ -1,5 +1,6 @@
 
 import { toast } from "@/hooks/use-toast";
+import { completeBookingPayment } from "@/services/bookingService";
 
 export type PaymentMethod = 'eft' | 'cash' | 'online';
 export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded' | 'partially_refunded';
@@ -104,12 +105,12 @@ export const generateInvoice = (
   const currentDate = new Date();
   const dueDate = new Date();
   dueDate.setDate(currentDate.getDate() + 14); // Due in 14 days
-  
+
   const tax = amount * 0.15; // 15% tax
   const total = amount + tax;
-  
+
   const invoiceNumber = `INV-${currentDate.getFullYear()}-${sampleInvoices.length + 1}`.padStart(10, '0');
-  
+
   const newInvoice: Invoice = {
     id: `inv-${Date.now()}`,
     bookingId,
@@ -125,22 +126,22 @@ export const generateInvoice = (
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString()
   };
-  
+
   // In a real app, save to database
   sampleInvoices.push(newInvoice);
-  
+
   // Notify client
   sendInvoiceNotification(newInvoice);
-  
+
   return newInvoice;
 };
 
 // Process a payment for an invoice
-export const processPayment = (
+export const processPayment = async (
   invoiceId: string,
   method: PaymentMethod,
   transactionId?: string
-): Payment | null => {
+): Promise<Payment | null> => {
   const invoice = sampleInvoices.find(inv => inv.id === invoiceId);
   if (!invoice) {
     toast({
@@ -150,7 +151,7 @@ export const processPayment = (
     });
     return null;
   }
-  
+
   const newPayment: Payment = {
     id: `pay-${Date.now()}`,
     bookingId: invoice.bookingId,
@@ -163,18 +164,25 @@ export const processPayment = (
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  
+
   // Update invoice status
   invoice.status = 'paid';
   invoice.paymentId = newPayment.id;
   invoice.updatedAt = new Date().toISOString();
-  
+
   // In a real app, save to database
   samplePayments.push(newPayment);
-  
+
   // Notify client
   sendPaymentNotification(newPayment, invoice);
-  
+
+  try {
+    await completeBookingPayment(invoice.bookingId, invoice.total);
+  } catch (error) {
+    console.error("Payment processing failed during server-side booking/loyalty update:", error);
+    throw error;
+  }
+
   return newPayment;
 };
 
@@ -188,16 +196,16 @@ export const calculateRefundAmount = (
   if (!invoice) {
     return 0;
   }
-  
+
   const daysDifference = Math.floor((bookingDate.getTime() - cancellationDate.getTime()) / (1000 * 60 * 60 * 24));
-  
+
   // Refund policy:
   // > 14 days: 100% refund
   // 7-14 days: 75% refund
   // 3-7 days: 50% refund
   // 1-3 days: 25% refund
   // < 24 hours: No refund
-  
+
   if (daysDifference > 14) {
     return invoice.total;
   } else if (daysDifference >= 7) {
@@ -226,9 +234,9 @@ export const processRefund = (
     });
     return null;
   }
-  
+
   const isFullRefund = amount === payment.amount;
-  
+
   const refundPayment: Payment = {
     id: `ref-${Date.now()}`,
     bookingId: payment.bookingId,
@@ -241,24 +249,24 @@ export const processRefund = (
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  
+
   // Update original payment status
   payment.status = isFullRefund ? 'refunded' : 'partially_refunded';
   payment.updatedAt = new Date().toISOString();
-  
+
   // In a real app, save to database
   samplePayments.push(refundPayment);
-  
+
   // Update invoice status if needed
   const invoice = sampleInvoices.find(inv => inv.paymentId === paymentId);
   if (invoice) {
     invoice.status = isFullRefund ? 'cancelled' : 'paid';
     invoice.updatedAt = new Date().toISOString();
   }
-  
+
   // Notify client
   sendRefundNotification(refundPayment, reason);
-  
+
   return refundPayment;
 };
 

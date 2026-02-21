@@ -1,4 +1,6 @@
 
+import type { LoyaltyState } from "./loyalty";
+
 export type UserRole = 'client' | 'staff' | 'admin' | 'guest';
 
 export interface User {
@@ -10,10 +12,12 @@ export interface User {
   bio?: string;
   isBusinessAccount?: boolean;
   membershipTier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip';
-  points: number;
   profilePic?: string;
   role: UserRole;
   signupMethod?: 'email' | 'google' | 'facebook' | 'whatsapp';
+  accountStatus: 'active' | 'frozen' | 'suspended';
+  lastActivityAt?: string;
+  loyaltyState?: LoyaltyState;
 }
 
 export interface AuthContextType {
@@ -27,7 +31,9 @@ export interface AuthContextType {
   adminLogin: (email: string, password: string) => Promise<void>;
   guestAccess: (name: string, email: string) => Promise<void>;
   logout: () => void;
+  resetPassword: (email: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
   hasRole: (roles: UserRole | UserRole[]) => boolean;
   updateMembershipTier: (tier: 'free' | 'bronze' | 'silver' | 'gold' | 'vip') => void;
-  addPoints: (points: number) => void;
+  updateProfile: (data: Partial<User>) => Promise<void>;
 }

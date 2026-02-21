@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from "@/components/ui/use-toast";
 
 const quoteSchema = z.object({
@@ -25,7 +25,7 @@ type QuoteFormValues = z.infer<typeof quoteSchema>;
 const GuestQuoteForm: React.FC = () => {
   const { guestAccess } = useAuth();
   const [isLoading, setIsLoading] = React.useState(false);
-  
+
   const form = useForm<QuoteFormValues>({
     resolver: zodResolver(quoteSchema),
     defaultValues: {
@@ -42,15 +42,15 @@ const GuestQuoteForm: React.FC = () => {
     try {
       // Register as guest user
       await guestAccess(values.name, values.email);
-      
+
       // Simulate API call for quote submission
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       toast({
         title: "Quote request submitted!",
         description: "We'll get back to you within 24 hours with a personalized quote.",
       });
-      
+
       // Reset form
       form.reset();
     } catch (error) {
@@ -72,7 +72,7 @@ const GuestQuoteForm: React.FC = () => {
           Fill out the form below and we'll get back to you with a personalized quote.
         </p>
       </div>
-      
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -88,7 +88,7 @@ const GuestQuoteForm: React.FC = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="email"
@@ -102,7 +102,7 @@ const GuestQuoteForm: React.FC = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="phone"
@@ -116,7 +116,7 @@ const GuestQuoteForm: React.FC = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="serviceType"
@@ -159,7 +159,7 @@ const GuestQuoteForm: React.FC = () => {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="details"
@@ -167,17 +167,17 @@ const GuestQuoteForm: React.FC = () => {
               <FormItem>
                 <FormLabel>Project Details</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    placeholder="Please describe your project, expected date, location, and any special requirements..." 
+                  <Textarea
+                    placeholder="Please describe your project, expected date, location, and any special requirements..."
                     className="min-h-[120px]"
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <>

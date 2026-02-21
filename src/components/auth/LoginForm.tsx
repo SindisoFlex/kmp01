@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,9 +5,9 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Facebook, Mail, Loader2, MessageSquare } from "lucide-react";
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from "@/components/ui/use-toast";
+import { Facebook, Loader2, MessageSquare } from "lucide-react";
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email" }),
@@ -18,7 +17,8 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginForm: React.FC = () => {
-  const { login, socialLogin } = useAuth();
+  const { login, socialLogin, resetPassword } = useAuth();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [loginMethod, setLoginMethod] = useState<'form' | 'social' | null>(null);
 
@@ -44,10 +44,11 @@ const LoginForm: React.FC = () => {
         title: "Login successful",
         description: "Welcome back to Kasilam Media production!",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Please check your credentials and try again.";
       toast({
         title: "Login failed",
-        description: error.message || "Please check your credentials and try again.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -65,10 +66,11 @@ const LoginForm: React.FC = () => {
         title: "Login successful",
         description: "Welcome back to Kasilam Media production!",
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Please try again or use email login.";
       toast({
         title: "Social login failed",
-        description: "Please try again or use email login.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -172,7 +174,36 @@ const LoginForm: React.FC = () => {
             />
 
             <div className="text-right">
-              <Button variant="link" type="button" className="px-0">
+              <Button
+                variant="link"
+                type="button"
+                className="px-0"
+                onClick={async () => {
+                  const email = form.getValues('email');
+                  if (!email) {
+                    toast({
+                      title: "Email required",
+                      description: "Please enter your email address first to reset your password.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  try {
+                    await resetPassword(email);
+                    toast({
+                      title: "Password reset email sent",
+                      description: "Please check your inbox for instructions to reset your password.",
+                    });
+                  } catch (error: unknown) {
+                    const message = error instanceof Error ? error.message : "Failed to send reset email.";
+                    toast({
+                      title: "Error",
+                      description: message,
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
                 Forgot password?
               </Button>
             </div>

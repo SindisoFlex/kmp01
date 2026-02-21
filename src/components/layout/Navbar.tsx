@@ -60,15 +60,16 @@ const Navbar: React.FC = () => {
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
-          ? "bg-background/80 backdrop-blur-md shadow-sm"
-          : "bg-transparent"
+        ? "bg-background/80 backdrop-blur-md shadow-sm"
+        : "bg-transparent"
         }`}
     >
       <div className="page-container">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center" onClick={() => playSound("click")}>
-            <span className="text-xl font-bold tracking-tight">
+          <Link to="/" className="flex items-center gap-2" onClick={() => playSound("click")}>
+            <img src="/src/components/1kmp.svg" alt="KMP Logo" className="h-10 w-auto" />
+            <span className="text-xl font-bold tracking-tight hidden sm:inline-block">
               Kasilam Media production
             </span>
           </Link>
@@ -131,10 +132,11 @@ const Navbar: React.FC = () => {
             <div className="flex justify-between items-center">
               <Link
                 to="/"
-                className="text-xl font-bold"
+                className="flex items-center gap-2"
                 onClick={handleNavClick}
               >
-                Kasilam Media production
+                <img src="/src/components/1kmp.svg" alt="KMP Logo" className="h-8 w-auto" />
+                <span className="text-xl font-bold">Kasilam Media</span>
               </Link>
               <Button
                 variant="ghost"

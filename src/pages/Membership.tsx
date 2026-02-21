@@ -1,10 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { determineTier, pointsToNextTier } from "@/utils/pointsUtils";
-import { useAuth } from "@/hooks/useAuth";
+import { determineTier } from "@/utils/loyaltyUtils";
+import { useAuth } from "@/contexts/AuthContext";
 import AuthDialog from '@/components/auth/AuthDialog';
 import PageLayout from "@/components/layout/PageLayout";
 import { Shield, Award, Star } from 'lucide-react';
@@ -50,8 +50,8 @@ const MembershipPage: React.FC = () => {
     );
   }
 
-  const currentTier = determineTier(user.points);
-  const { nextTier, pointsNeeded } = pointsToNextTier(user.points);
+  const bookingsCount = user.loyaltyState?.individual_completed_bookings || 0;
+  const currentTier = determineTier(bookingsCount);
 
   return (
     <PageLayout>
@@ -86,7 +86,7 @@ const MembershipPage: React.FC = () => {
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold">Membership Tiers</h3>
                   <p className="text-muted-foreground">
-                    As you earn more points, you'll unlock higher membership tiers with exclusive benefits.
+                    As you complete more bookings, you'll unlock higher membership tiers with exclusive benefits.
                   </p>
                 </div>
 
@@ -105,7 +105,7 @@ const MembershipPage: React.FC = () => {
                   <Card className="bg-amber-100/50">
                     <CardHeader>
                       <CardTitle>Bronze</CardTitle>
-                      <CardDescription>1+ points</CardDescription>
+                      <CardDescription>1+ bookings</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <p>5% discount on photoshoots</p>
@@ -116,7 +116,7 @@ const MembershipPage: React.FC = () => {
                   <Card className="bg-gray-100/50">
                     <CardHeader>
                       <CardTitle>Silver</CardTitle>
-                      <CardDescription>51+ points</CardDescription>
+                      <CardDescription>3+ bookings</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <p>10% discount on photoshoots</p>
@@ -137,23 +137,10 @@ const MembershipPage: React.FC = () => {
                 <Card>
                   <CardHeader>
                     <CardTitle>Current Tier: {currentTier}</CardTitle>
-                    <CardDescription>You have {user.points} points</CardDescription>
+                    <CardDescription>You have completed {bookingsCount} bookings</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {nextTier ? (
-                      <>
-                        <div className="mb-4">
-                          <div className="flex justify-between">
-                            <span>Progress to {nextTier}</span>
-                            <span>{pointsNeeded} points needed</span>
-                          </div>
-                          <Progress value={100 - (pointsNeeded / (pointsNeeded + user.points) * 100)} />
-                        </div>
-                        <p>Keep earning points to unlock exclusive benefits!</p>
-                      </>
-                    ) : (
-                      <p>You've reached the highest membership tier!</p>
-                    )}
+                    <p>Keep booking our services to unlock exclusive loyalty benefits!</p>
                   </CardContent>
                 </Card>
               </TabsContent>

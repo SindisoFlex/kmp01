@@ -1,6 +1,6 @@
 
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { UserRole } from "@/types/auth";
 import { toast } from "@/hooks/use-toast";
 import React from "react";

@@ -10,6 +10,9 @@ import BookingDetailsForm from "./steps/BookingDetailsForm";
 import ExtrasSelection from "./steps/ExtrasSelection";
 import BookingSummary from "./steps/BookingSummary";
 import BookingConfirmation from "./steps/BookingConfirmation";
+import { calculatePricing } from "@/utils/loyaltyUtils";
+import { useAuth } from "@/contexts/AuthContext";
+import { createBooking } from "@/services/bookingService";
 
 // Define step names for the wizard
 const steps = [
@@ -32,8 +35,9 @@ const BookingWizard = () => {
     location: "",
     description: "",
     attachments: [] as File[],
-    extras: [] as string[],
+    extras: [] as string[]
   });
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [bookingId, setBookingId] = useState("");
@@ -59,39 +63,63 @@ const BookingWizard = () => {
     setBookingData(prev => ({ ...prev, ...data }));
   };
 
+  // Calculate prices and discounts
+  const calculatePrice = () => {
+    // Mock base prices for demonstration
+    const basePrices: Record<string, number> = {
+      photography: 1200,
+      videography: 2500,
+      webdev: 8000,
+      aitraining: 3000,
+      marketing: 1500,
+      printing: 500,
+    };
+
+    const extrasPrices: Record<string, number> = {
+      prints: 200,
+      drone: 1500,
+      sameday: 500,
+      framed: 800,
+      transportation: 300,
+      seo: 1200,
+      hosting: 500,
+    };
+
+    const basePrice = basePrices[bookingData.service as keyof typeof basePrices] || 0;
+    const extrasTotal = bookingData.extras.reduce((total, id) => total + (extrasPrices[id] || 0), 0);
+    const subtotal = basePrice + extrasTotal;
+
+    const pricing = calculatePricing(
+      subtotal,
+      user?.membershipTier || 'free',
+      user?.role === 'staff' || user?.role === 'admin',
+      bookingData.service.charAt(0).toUpperCase() + bookingData.service.slice(1)
+    );
+
+    return pricing;
+  };
+
   // Handle form submission
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    
+
     try {
-      // In a real app, this would be an API call to store the booking in a database
-      // and notify the admin/staff
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Generate a unique booking ID (in production this would come from the backend)
-      const generatedBookingId = `BK-${Math.floor(100000 + Math.random() * 900000)}`;
-      setBookingId(generatedBookingId);
-      
-      // Log the booking to simulate database storage
-      console.log("Booking submitted:", {
-        id: generatedBookingId,
+      const result = await createBooking({
         ...bookingData,
-        status: "pending",
-        createdAt: new Date().toISOString(),
+        date: bookingData.date?.toISOString(),
       });
-      
+
+      setBookingId(result.id);
+
       toast({
         title: "Booking Submitted Successfully!",
-        description: `Your booking reference is: ${generatedBookingId}`,
+        description: `Your booking reference is: ${result.id}`,
       });
-      
-      // Simulate notification to admin/staff
-      console.log("Sending notification to admin/staff about new booking:", generatedBookingId);
-      
-      // Mark booking as complete
+
       setIsComplete(true);
-      
+
     } catch (error) {
+      console.error("Submission error:", error);
       toast({
         title: "Submission Failed",
         description: "There was an error submitting your booking. Please try again.",
@@ -106,12 +134,12 @@ const BookingWizard = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <ServiceSelection 
-          selectedService={bookingData.service} 
-          onSelect={(service) => updateBookingData({ service })} 
+        return <ServiceSelection
+          selectedService={bookingData.service}
+          onSelect={(service) => updateBookingData({ service })}
         />;
       case 1:
-        return <CategorySelection 
+        return <CategorySelection
           service={bookingData.service}
           selectedCategory={bookingData.category}
           onSelect={(category) => updateBookingData({ category })}
@@ -136,8 +164,10 @@ const BookingWizard = () => {
           onUpdate={(extras) => updateBookingData({ extras })}
         />;
       case 4:
-        return <BookingSummary 
+        return <BookingSummary
           bookingData={bookingData}
+          priceBreakdown={calculatePrice()}
+          onUpdate={(details) => updateBookingData(details)}
         />;
       default:
         return null;
@@ -170,14 +200,13 @@ const BookingWizard = () => {
         <div className="flex justify-between">
           {steps.map((step, index) => (
             <div key={index} className="flex flex-col items-center">
-              <div 
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  index < currentStep 
-                    ? "bg-primary text-white"
-                    : index === currentStep
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${index < currentStep
+                  ? "bg-primary text-white"
+                  : index === currentStep
                     ? "bg-primary/20 text-primary border-2 border-primary"
                     : "bg-muted text-muted-foreground"
-                }`}
+                  }`}
               >
                 {index < currentStep ? (
                   <Check className="h-5 w-5" />
@@ -185,10 +214,9 @@ const BookingWizard = () => {
                   <span>{index + 1}</span>
                 )}
               </div>
-              <span 
-                className={`text-xs mt-2 ${
-                  index <= currentStep ? "text-primary font-medium" : "text-muted-foreground"
-                }`}
+              <span
+                className={`text-xs mt-2 ${index <= currentStep ? "text-primary font-medium" : "text-muted-foreground"
+                  }`}
               >
                 {step}
               </span>
@@ -197,8 +225,8 @@ const BookingWizard = () => {
         </div>
         <div className="relative mt-2">
           <div className="absolute top-0 h-1 bg-muted w-full"></div>
-          <div 
-            className="absolute top-0 h-1 bg-primary transition-all" 
+          <div
+            className="absolute top-0 h-1 bg-primary transition-all"
             style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
           ></div>
         </div>
@@ -229,14 +257,14 @@ const BookingWizard = () => {
           >
             <ChevronLeft className="mr-2 h-4 w-4" /> Previous
           </Button>
-          
+
           {currentStep < steps.length - 1 ? (
             <Button onClick={handleNext} disabled={isNextDisabled()}>
               Next <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               disabled={isSubmitting}
               className="bg-green-600 hover:bg-green-700"
             >

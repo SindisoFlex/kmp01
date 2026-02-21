@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,14 +34,14 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onSuccess }) => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       await adminLogin(data.email, data.password);
       toast({
         title: "Admin login successful",
         description: "Welcome to the admin dashboard"
       });
-      
+
       if (onSuccess) {
         onSuccess();
       } else {
@@ -63,7 +63,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onSuccess }) => {
           Enter your admin credentials to access the dashboard
         </p>
       </div>
-      
+
       {error && (
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />
@@ -115,12 +115,12 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onSuccess }) => {
             <p className="text-sm text-destructive">{errors.password.message}</p>
           )}
         </div>
-        
+
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Logging in..." : "Log In to Admin Panel"}
         </Button>
       </form>
-      
+
       <p className="text-center text-sm text-muted-foreground mt-4">
         <span className="text-xs">Demo admin credentials:</span>
         <br />

@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,8 +18,9 @@ import { toast } from "@/hooks/use-toast";
 import { UserCheck } from "lucide-react";
 
 const UserProfile: React.FC = () => {
-  const { user } = useAuth();
-  
+  const { user, updateProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -28,117 +29,129 @@ const UserProfile: React.FC = () => {
     bio: user?.bio || '',
     isBusinessAccount: user?.isBusinessAccount || false
   });
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleSwitchChange = (checked: boolean) => {
     setFormData(prev => ({ ...prev, isBusinessAccount: checked }));
   };
-  
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Here you would typically update the user profile via API
-    console.log('Profile data to update:', formData);
-    
-    toast({
-      title: "Profile Updated",
-      description: "Your profile information has been updated successfully.",
-    });
+    setIsLoading(true);
+
+    try {
+      await updateProfile(formData);
+
+      toast({
+        title: "Profile Updated",
+        description: "Your profile information has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error.message || "An error occurred while saving your profile.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
+
   return (
     <div className="container max-w-3xl mx-auto py-6">
       <h1 className="text-2xl font-bold mb-6">My Profile</h1>
-      
+
       <Card className="card-dashboard">
         <form onSubmit={handleSubmit}>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
             <CardDescription>Update your profile information.</CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input 
-                id="name" 
-                name="name" 
-                value={formData.name} 
-                onChange={handleChange} 
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Enter your full name"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input 
-                id="email" 
-                name="email" 
-                type="email" 
-                value={formData.email} 
-                onChange={handleChange} 
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Enter your email address"
               />
             </div>
-            
+
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input 
-                  id="phone" 
-                  name="phone" 
-                  value={formData.phone} 
-                  onChange={handleChange} 
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   placeholder="Enter your phone number"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="whatsapp">WhatsApp Number</Label>
-                <Input 
-                  id="whatsapp" 
-                  name="whatsapp" 
-                  value={formData.whatsapp} 
-                  onChange={handleChange} 
+                <Input
+                  id="whatsapp"
+                  name="whatsapp"
+                  value={formData.whatsapp}
+                  onChange={handleChange}
                   placeholder="Enter your WhatsApp number"
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="bio">Short Bio</Label>
-              <Textarea 
-                id="bio" 
-                name="bio" 
-                value={formData.bio} 
-                onChange={handleChange} 
+              <Textarea
+                id="bio"
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
                 placeholder="Tell us a little about yourself"
                 className="resize-none"
                 rows={4}
               />
             </div>
-            
+
             <div className="flex items-center space-x-2 pt-2">
-              <Switch 
-                id="isBusinessAccount" 
+              <Switch
+                id="isBusinessAccount"
                 checked={formData.isBusinessAccount}
                 onCheckedChange={handleSwitchChange}
               />
               <Label htmlFor="isBusinessAccount">This is a business account</Label>
             </div>
           </CardContent>
-          
+
           <CardFooter className="flex justify-between">
-            <Button type="button" variant="outline">Cancel</Button>
-            <Button type="submit">Save Changes</Button>
+            <Button type="button" variant="outline" disabled={isLoading}>Cancel</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Changes"}
+            </Button>
           </CardFooter>
         </form>
       </Card>
-      
+
       <Card className="mt-6 card-dashboard">
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -147,7 +160,7 @@ const UserProfile: React.FC = () => {
           </div>
           <CardDescription>Your current membership status and settings.</CardDescription>
         </CardHeader>
-        
+
         <CardContent>
           <div className="space-y-2">
             <div className="flex justify-between">

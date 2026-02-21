@@ -1,111 +1,111 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import React from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { determineTier, pointsToNextTier } from "@/utils/pointsUtils";
-import { 
-  Award, 
-  Calendar, 
-  ChevronRight, 
-  GalleryHorizontal, 
-  Share 
-} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Award, BriefcaseBusiness, Calendar, ChevronRight, User } from "lucide-react";
+import { LoyaltyTier } from "@/types/loyalty";
+import { getLoyaltyState } from "@/services/loyaltyService";
+import { loyaltyConfig } from "@/utils/loyaltyUtils";
+
+const INDIVIDUAL_THRESHOLDS = { bronze: 1, silver: 3, gold: 5 };
+const CORPORATE_THRESHOLDS = { bronze: 50000, silver: 100000, gold: 200000 };
+
+const tierLabel = (tier: LoyaltyTier) => (tier === "none" ? "Free" : tier.charAt(0).toUpperCase() + tier.slice(1));
 
 const DashboardIndex: React.FC = () => {
   const { user } = useAuth();
+  const [loading, setLoading] = React.useState(true);
+  const [loyalty, setLoyalty] = React.useState(user?.loyaltyState || null);
 
-  // Mock data for dashboard
-  const upcomingBookings = [
-    { id: 1, service: "Portrait Photography", date: "2025-06-01T10:00:00", status: "confirmed" },
-    { id: 2, service: "Family Photoshoot", date: "2025-06-15T14:30:00", status: "pending" }
-  ];
-  
-  const recentPhotos = [
-    { id: 1, url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80", alt: "Portrait" },
-    { id: 2, url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80", alt: "Fashion" },
-    { id: 3, url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80", alt: "Model" }
-  ];
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short',
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-  
-  // Get tier information if user exists
-  const currentTier = user ? determineTier(user.points) : 'free';
-  const tierInfo = user ? pointsToNextTier(user.points) : { nextTier: 'bronze', pointsNeeded: 0 };
-  
-  // Calculate progress percentage
-  const calculateProgress = () => {
-    if (!user) return 0;
-    
-    if (currentTier === 'vip') return 100;
-    
-    if (currentTier === 'free' && user.points === 0) return 0;
-    
-    const tiers = {
-      free: { min: 0, max: 0 },
-      bronze: { min: 1, max: 50 },
-      silver: { min: 51, max: 100 },
-      gold: { min: 101, max: 250 },
-      vip: { min: 251, max: Infinity }
+  React.useEffect(() => {
+    const load = async () => {
+      if (!user) return;
+      try {
+        const data = await getLoyaltyState(user.id);
+        setLoyalty(data);
+      } catch (error: unknown) {
+        if (!(typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "42P01")) {
+          console.error("Failed to load loyalty state:", error);
+        }
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    const currentMin = tiers[currentTier].min;
-    const nextMin = tierInfo.nextTier ? tiers[tierInfo.nextTier].min : currentMin;
-    const range = nextMin - currentMin;
-    
-    if (range === 0) return 100;
-    
-    return Math.min(100, Math.max(0, ((user.points - currentMin) / range) * 100));
-  };
+
+    load();
+  }, [user]);
+
+  if (!user) return null;
+
+  const individualBookings = loyalty?.individual_completed_bookings || 0;
+  const individualTier = (loyalty?.individual_tier as LoyaltyTier) || "none";
+  const individualSpend = loyalty?.individual_total_spend || 0;
+
+  const nextIndividualTarget =
+    individualBookings < INDIVIDUAL_THRESHOLDS.bronze
+      ? INDIVIDUAL_THRESHOLDS.bronze
+      : individualBookings < INDIVIDUAL_THRESHOLDS.silver
+        ? INDIVIDUAL_THRESHOLDS.silver
+        : INDIVIDUAL_THRESHOLDS.gold;
+
+  const individualProgress = Math.min(100, (individualBookings / INDIVIDUAL_THRESHOLDS.gold) * 100);
+  const corporateSpend = loyalty?.corporate_eligible_spend || 0;
+  const corporateTier = (loyalty?.corporate_tier as LoyaltyTier) || "none";
+  const corporateTarget =
+    corporateSpend < CORPORATE_THRESHOLDS.bronze
+      ? CORPORATE_THRESHOLDS.bronze
+      : corporateSpend < CORPORATE_THRESHOLDS.silver
+        ? CORPORATE_THRESHOLDS.silver
+        : CORPORATE_THRESHOLDS.gold;
+
+  const corporateProgress = Math.min(100, (corporateSpend / CORPORATE_THRESHOLDS.gold) * 100);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Welcome Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold">Welcome back, {user?.name?.split(' ')[0] || 'there'}!</h1>
-        <p className="text-muted-foreground">Here's a summary of your activity and upcoming bookings.</p>
+        <h1 className="text-2xl font-semibold">Welcome back, {user.name?.split(" ")[0] || "there"}!</h1>
+        <p className="text-muted-foreground">Manage your bookings, loyalty rewards, and professional profile.</p>
       </div>
 
-      {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-3 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
-              <CardTitle className="text-sm font-medium">Membership</CardTitle>
-              <CardDescription>Current tier status</CardDescription>
+              <CardTitle className="text-sm font-medium">Individual Loyalty</CardTitle>
+              <CardDescription>Tier based on completed bookings</CardDescription>
             </div>
             <Award className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold mb-2 capitalize">{currentTier}</div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-              <div 
-                className="bg-primary h-2 rounded-full" 
-                style={{ width: `${calculateProgress()}%` }}
-              />
+            <div className="text-2xl font-bold capitalize">{tierLabel(individualTier as LoyaltyTier)}</div>
+            <div className="text-sm text-muted-foreground mb-2">
+              {individualBookings} completed bookings | R{individualSpend.toFixed(2)} total spend
             </div>
-            {tierInfo.nextTier ? (
-              <p className="text-xs text-muted-foreground mt-2">
-                {tierInfo.pointsNeeded} more points until {tierInfo.nextTier} tier
-              </p>
-            ) : (
-              <p className="text-xs text-muted-foreground mt-2">
-                You've reached our highest tier!
-              </p>
-            )}
-            <Button variant="link" className="p-0 mt-2" asChild>
-              <Link to="/dashboard/points">View membership details</Link>
+            <Progress value={individualProgress} className="h-2" />
+            <p className="text-xs text-muted-foreground mt-2">
+              {individualBookings >= INDIVIDUAL_THRESHOLDS.gold
+                ? "Gold tier reached"
+                : `${Math.max(0, nextIndividualTarget - individualBookings)} bookings to next tier`}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div className="space-y-1">
+              <CardTitle className="text-sm font-medium">My Profile</CardTitle>
+              <CardDescription>Manage your account settings</CardDescription>
+            </div>
+            <User className="h-5 w-5 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-medium truncate">{user.name}</div>
+            <p className="text-xs text-muted-foreground mb-4">{user.email}</p>
+            <Button variant="outline" size="sm" className="w-full" asChild>
+              <Link to="/dashboard/profile">Edit Profile</Link>
             </Button>
           </CardContent>
         </Card>
@@ -113,185 +113,67 @@ const DashboardIndex: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
-              <CardTitle className="text-sm font-medium">Points</CardTitle>
-              <CardDescription>Your reward balance</CardDescription>
+              <CardTitle className="text-sm font-medium">Corporate Loyalty</CardTitle>
+              <CardDescription>Webdev + marketing spend tier</CardDescription>
             </div>
-            <div className="h-5 w-5 text-primary font-semibold">🏆</div>
+            <BriefcaseBusiness className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{user?.points || 0}</div>
-            <p className="text-sm text-muted-foreground">Earn points with every booking!</p>
-            <Button variant="link" className="p-0 mt-2" asChild>
-              <Link to="/dashboard/points">View rewards</Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <div className="space-y-1">
-              <CardTitle className="text-sm font-medium">Gallery</CardTitle>
-              <CardDescription>Your photo collection</CardDescription>
-            </div>
-            <GalleryHorizontal className="h-5 w-5 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12 Photos</div>
-            <p className="text-sm text-muted-foreground">From 3 sessions</p>
-            <Button variant="link" className="p-0 mt-2" asChild>
-              <Link to="/dashboard/gallery">View gallery</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Upcoming Bookings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">Upcoming Bookings</CardTitle>
-            <CardDescription>Your scheduled photography sessions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {upcomingBookings.length > 0 ? (
-              <div className="space-y-4">
-                {upcomingBookings.map((booking) => (
-                  <div 
-                    key={booking.id} 
-                    className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
-                  >
-                    <div>
-                      <div className="font-medium">{booking.service}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatDate(booking.date)}
-                      </div>
-                      <div className={`text-xs mt-1 ${
-                        booking.status === 'confirmed' 
-                          ? 'text-green-500 dark:text-green-400' 
-                          : 'text-amber-500 dark:text-amber-400'
-                      }`}>
-                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to={`/dashboard/bookings/${booking.id}`}>
-                        Details
-                      </Link>
-                    </Button>
-                  </div>
-                ))}
-                <Button variant="outline" className="w-full mt-2" asChild>
-                  <Link to="/dashboard/bookings">
-                    View all bookings
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center py-6">
-                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                <h3 className="text-lg font-medium">No upcoming bookings</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Schedule your next photography session
-                </p>
-                <Button asChild>
-                  <Link to="/services">Book Now</Link>
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Recent Photos */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">Recent Photos</CardTitle>
-            <CardDescription>Photos from your latest sessions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {recentPhotos.length > 0 ? (
+            {!user.isBusinessAccount ? (
               <>
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  {recentPhotos.map((photo) => (
-                    <div key={photo.id} className="overflow-hidden rounded-md border">
-                      <AspectRatio ratio={1 / 1}>
-                        <img 
-                          src={photo.url} 
-                          alt={photo.alt} 
-                          className="h-full w-full object-cover transition-all hover:scale-105" 
-                        />
-                      </AspectRatio>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full" asChild>
-                  <Link to="/dashboard/gallery">
-                    View all photos
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
+                <div className="text-sm text-muted-foreground">Business account required for this track.</div>
+                <Button variant="link" className="p-0 mt-2" asChild>
+                  <Link to="/dashboard/profile">Update account type</Link>
                 </Button>
               </>
             ) : (
-              <div className="text-center py-6">
-                <GalleryHorizontal className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                <h3 className="text-lg font-medium">No photos yet</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Your gallery will populate after your first photoshoot
+              <>
+                <div className="text-2xl font-bold capitalize">{tierLabel(corporateTier as LoyaltyTier)}</div>
+                <div className="text-sm text-muted-foreground mb-2">Eligible spend: R{corporateSpend.toFixed(2)}</div>
+                <Progress value={corporateProgress} className="h-2" />
+                <p className="text-xs text-muted-foreground mt-2">
+                  {corporateSpend >= CORPORATE_THRESHOLDS.gold
+                    ? "Gold tier reached"
+                    : `R${Math.max(0, corporateTarget - corporateSpend).toFixed(2)} to next tier`}
                 </p>
-              </div>
+              </>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold">New Booking</h3>
-                <p className="text-sm text-muted-foreground">Schedule your next session</p>
-              </div>
-              <Button asChild>
-                <Link to="/services">Book</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Quick Actions</CardTitle>
+          <CardDescription>Continue with your most common account actions</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Button asChild>
+            <Link to="/dashboard/booking/new">
+              <Calendar className="h-4 w-4 mr-2" />
+              New Booking
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/membership">
+              <Award className="h-4 w-4 mr-2" />
+              Membership Benefits
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/dashboard/bookings">
+              <Calendar className="h-4 w-4 mr-2" />
+              Booking History
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold">Refer a Friend</h3>
-                <p className="text-sm text-muted-foreground">Earn 50 points per referral</p>
-              </div>
-              <Button variant="outline" asChild>
-                <Link to="/dashboard/points">
-                  <Share className="h-4 w-4 mr-2" />
-                  Share
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold">Customize Gallery</h3>
-                <p className="text-sm text-muted-foreground">Change theme & layout</p>
-              </div>
-              <Button variant="outline" asChild>
-                <Link to="/dashboard/gallery-settings">Customize</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {loading && (
+        <p className="text-xs text-muted-foreground mt-3">Refreshing loyalty status...</p>
+      )}
     </div>
   );
 };

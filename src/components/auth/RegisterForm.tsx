@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Facebook, Loader2, MessageSquare } from "lucide-react";
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from "@/components/ui/use-toast";
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from "@/hooks/use-toast";
 
 const registerSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -23,6 +22,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const RegisterForm: React.FC = () => {
   const { register, socialLogin } = useAuth();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [registrationMethod, setRegistrationMethod] = useState<'form' | 'social' | null>(null);
 
@@ -64,11 +64,12 @@ const RegisterForm: React.FC = () => {
           description: "Your account has been created successfully.",
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Please try again or use a different method.";
       console.error('Registration error:', error);
       toast({
         title: "Registration failed",
-        description: error.message || "Please try again or use a different method.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -86,10 +87,11 @@ const RegisterForm: React.FC = () => {
         title: "🎉 Welcome to Kasilam Media production!",
         description: "You've successfully signed up.",
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Please try again or use email registration.";
       toast({
         title: "Social login failed",
-        description: "Please try again or use email registration.",
+        description: message,
         variant: "destructive",
       });
     } finally {

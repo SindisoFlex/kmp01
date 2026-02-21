@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import GalleryCollection from '@/components/gallery/GalleryCollection';
 import ExpirationBanner from '@/components/gallery/ExpirationBanner';
 import VisibilityToggle from '@/components/gallery/VisibilityToggle';

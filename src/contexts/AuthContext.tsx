@@ -1,5 +1,4 @@
-
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserRole, AuthContextType } from '../types/auth';
 import { supabase } from '../lib/supabase';
 import {
@@ -10,10 +9,22 @@ import {
   socialLoginUser,
   createGuestAccess,
   getUserProfile,
-  logoutUser
+  logoutUser,
+  resetPassword,
+  updateUserProfile
 } from '../services/authService';
+import { touchLastActivity } from '../services/accountLifecycleService';
+import { getLoyaltyState } from '../services/loyaltyService';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -24,16 +35,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const refreshUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) {
+      setUser(null);
+      setIsAuthenticated(false);
+      return;
+    }
+
+    const profile = await getUserProfile(session.user.id);
+    let loyaltyState = null;
+    try {
+      loyaltyState = await getLoyaltyState(session.user.id);
+    } catch (error: any) {
+      if (error?.code !== "42P01") {
+        console.error("Failed to fetch loyalty state:", error);
+      }
+    }
+    setUser({ ...profile, loyaltyState: loyaltyState || undefined });
+    setIsAuthenticated(true);
+    await touchLastActivity();
+  };
+
   // Sync auth state with Supabase
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          const profile = await getUserProfile(session.user.id);
-          setUser(profile);
-          setIsAuthenticated(true);
-        }
+        await refreshUser();
       } catch (error) {
         console.error('Initial session check error:', error);
       } finally {
@@ -47,9 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       if (session?.user) {
         try {
-          const profile = await getUserProfile(session.user.id);
-          setUser(profile);
-          setIsAuthenticated(true);
+          await refreshUser();
         } catch (error) {
           console.error('State change profile fetch error:', error);
           setUser(null);
@@ -126,6 +152,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Password reset
+  const handleResetPassword = async (email: string) => {
+    await resetPassword(email);
+  };
+
   // Helper function to check if user has specific role(s)
   const hasRole = (roles: UserRole | UserRole[]): boolean => {
     if (!user) return false;
@@ -145,12 +176,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Add loyalty points (local optimization, should ideally update DB)
-  const addPoints = (points: number) => {
-    if (user) {
-      setUser({ ...user, points: user.points + points });
-      // In production, sync this to Supabase 'profiles' table
-    }
+  // Update profile
+  const updateProfile = async (data: Partial<User>) => {
+    if (!user) return;
+    await updateUserProfile(user.id, data);
+    await refreshUser();
   };
 
   return (
@@ -166,9 +196,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         adminLogin,
         guestAccess,
         logout,
+        resetPassword: handleResetPassword,
+        refreshUser,
         hasRole,
         updateMembershipTier,
-        addPoints
+        updateProfile
       }}
     >
       {children}
