@@ -120,12 +120,6 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onSuccess }) => {
           {isLoading ? "Logging in..." : "Log In to Admin Panel"}
         </Button>
       </form>
-
-      <p className="text-center text-sm text-muted-foreground mt-4">
-        <span className="text-xs">Demo admin credentials:</span>
-        <br />
-        <code className="text-xs bg-muted px-1 py-0.5 rounded">admin@example.com</code> / <code className="text-xs bg-muted px-1 py-0.5 rounded">adminpass</code>
-      </p>
     </div>
   );
 };
